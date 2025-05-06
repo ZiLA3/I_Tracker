@@ -27,6 +27,7 @@ public class HandTracking : MonoBehaviour
         //0        1*3      2*3
         //x1,y1,z1,x2,y2,z2,x3,y3,z3
 
+        // 21개는 포인트 개수
         for (int i = 0; i < 21; i++)
         {
 
@@ -35,7 +36,6 @@ public class HandTracking : MonoBehaviour
             float z = float.Parse(points[i * 3 + 2]) / 100;
 
             handPoints[i].transform.localPosition = new Vector3(x, y, z);
-
         }
     }
 }
