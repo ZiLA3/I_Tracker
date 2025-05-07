@@ -105,7 +105,8 @@ def main():
     global running, paused, calibration_mode, calibration_points
     
     # 홍채 트래커 초기화
-    tracker = irisTracker()
+
+    iris = irisTracker()
     mapper = None
     
     # 유니티에 시작 신호 전송
@@ -126,7 +127,7 @@ def main():
                 continue
             
             # 홍채 위치 가져오기
-            iris_position, image = tracker.get_iris_position()
+            iris_position, image = iris.get_iris_position()
             
             if iris_position and image is not None:
                 if calibration_mode:
@@ -185,7 +186,7 @@ def main():
                           cv.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                 
                 # 화면 표시
-                cv.imshow('I-Tracker', image)
+                cv.imshow('I-', image)
             
             # 키 입력 처리
             key = cv.waitKey(5) & 0xFF
@@ -198,7 +199,7 @@ def main():
     finally:
         # 종료 신호 전송 및 정리
         send_to_unity({"type": "kill"})
-        tracker.release()
+        iris.release()
         cv.destroyAllWindows()
 
 if __name__ == "__main__":
