@@ -57,20 +57,18 @@ while True:
 
             # 왼쪽 홍채 그리기
             left_iris = face_landmarks.landmark[468]
-            clx = int(left_iris.x * w)
-            cly = int(left_iris.y * h)
-            cv2.circle(img, (clx, cly), 3, (0, 255, 0), -1)
+            left_iris_x, left_iris_y = (int(left_iris.x * w), int(left_iris.y * h)) 
+            cv2.circle(img, (left_iris_x, left_iris_y), 3, (0, 255, 0), -1)
 
             # 오른쪽 홍채 그리기
             right_iris = face_landmarks.landmark[473]
-            crx = int(right_iris.x * w)
-            cry = int(right_iris.y * h)
-            cv2.circle(img, (crx, cry), 3, (0, 255, 0), -1)
+            right_iris_x, right_iris_y = (int(right_iris.x * w), int(right_iris.y * h))
+            cv2.circle(img, (right_iris_x, right_iris_y), 3, (0, 255, 0), -1)
 
             # 홍채 중심 그리기
-            cx = (clx + crx) // 2
-            cy = (cry + cly) // 2
-            cv2.circle(img, (cx, cy), 3, (0, 0, 255), -1)
+            center_x, center_y = ((left_iris_x + right_iris_x), (left_iris_y + right_iris_y) // 2)
+            cv2.circle(img, (center_x, center_y), 3, (0, 0, 255), -1)
+            
             # ★ eye_data 생성 및 UDP 전송 추가 부분 ★
             eye_data = [clx, h - cly, crx, h - cry]
             sock.sendto(str.encode(str(eye_data)), eyeAddressPort)
