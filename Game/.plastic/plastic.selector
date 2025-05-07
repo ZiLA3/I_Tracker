@@ -1,4 +1,0 @@
-repository "I_Tracker/I_Tracker@4118799@cloud"
-  path "/"
-    br "/main"
-    co "/main"
