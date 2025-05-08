@@ -2,23 +2,17 @@ using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using System.Threading;
-using Newtonsoft.Json;
 
 public class UDPManager : MonoBehaviour
 {
     [SerializeField] int listenPort = 5000, sendPort = 5001;
-    UdpClient recvClient;
-    UdpClient sendClient;
-    IPEndPoint IpEndPoint;
-    Thread receiveThread;
-    Vector2 iris_position;
-
-    bool lt_corner;
-    bool lb_corner;
-    bool rt_corner;
-    bool rb_corner;
+    private UdpClient recvClient;
+    private UdpClient sendClient;
+    private IPEndPoint IpEndPoint;
+    private Thread receiveThread;
+    private Vector2 iris_position;
+    bool[] current_corner = {false, false}; // 0: x, 1: y
 
     void Start()
     {
@@ -41,49 +35,49 @@ public class UDPManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (lt_corner)
-                SendCaptured("lt", iris_position);
-            else if (lb_corner)
-                SendCaptured("lb", iris_position);
-            else if (rt_corner)
-                SendCaptured("rt", iris_position);
-            else if (rb_corner)
-                SendCaptured("rb", iris_position);
+            if(current_corner[0])
+            {
+                if (current_corner[1])
+                {
+                    SendCaptured("lt", iris_position);
+                }
+                else
+                {
+                    SendCaptured("lb", iris_position);
+                }
+            }
+            else
+            {
+                if (current_corner[1])
+                {
+                    SendCaptured("rt", iris_position);
+                }
+                else
+                {
+                    SendCaptured("rb", iris_position);
+                }
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
             SendCalibrationRequest("lt");
-            lt_corner = true;
-            lb_corner = false;
-            rt_corner = false;
-            rb_corner = false;
+            current_corner = new bool[]{false, false};
         }
-
-
         if (Input.GetKeyDown(KeyCode.F2))
         {
             SendCalibrationRequest("lb");
-            lb_corner = true;
-            lt_corner = false;
-            rt_corner = false;
-            rb_corner = false;
+            current_corner = new bool[]{false, true};
         }
         if (Input.GetKeyDown(KeyCode.F3))
         {
             SendCalibrationRequest("rt");
-            rt_corner = true;
-            lt_corner = false;
-            lb_corner = false;
-            rb_corner = false;
+            current_corner = new bool[]{true, false};
         }
         if (Input.GetKeyDown(KeyCode.F4))
         {
             SendCalibrationRequest("rb");
-            rb_corner = true;
-            lt_corner = false;
-            lb_corner = false;
-            rt_corner = false;
+            current_corner = new bool[]{true, true};
         }
     }
 
@@ -101,36 +95,34 @@ public class UDPManager : MonoBehaviour
         }
     }
 
-    
-
     void ProcessMessage(string json)
     {
-        // 4) JSON ÆÄ½Ì
+        // 4) JSON ï¿½Ä½ï¿½
         JObject msg = JObject.Parse(json);
         string type = msg["type"]?.ToString();
 
         switch (type)
         {
             case "start":
-                // È­¸é Å©±â Á¤º¸
+                // È­ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 JArray sz = (JArray)msg["screen_size"];
                 int w = sz?[0]?.Value<int>() ?? 1920;
                 int h = sz?[1]?.Value<int>() ?? 1080;
-                Debug.Log($"[UDPReceive] Start: screen size = {w}¡¿{h}");
+                Debug.Log($"[UDPReceive] Start: screen size = {w}ï¿½ï¿½{h}");
                 break;
 
             case "iris_position":
-                // Ä¶¸®ºê·¹ÀÌ¼Ç Áß È«Ã¤ ÁÂÇ¥ ½ºÆ®¸®¹Ö
+                // Ä¶ï¿½ï¿½ï¿½ê·¹ï¿½Ì¼ï¿½ ï¿½ï¿½ È«Ã¤ ï¿½ï¿½Ç¥ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
                 JArray p = (JArray)msg["position"];
                 float ix = p?[0]?.Value<float>() ?? 0f;
                 float iy = p?[1]?.Value<float>() ?? 0f;
                 iris_position = new Vector2(ix, iy);
                 Debug.Log($"[UDPReceive] Iris pos = ({ix:F1}, {iy:F1})");
-                // TODO: È­¸é¿¡ ¸¶Ä¿ ÀÌµ¿
+                // TODO: È­ï¿½é¿¡ ï¿½ï¿½Ä¿ ï¿½Ìµï¿½
                 break;
 
             case "captured":
-                // Ä¶¸®ºê·¹ÀÌ¼Ç ÁöÁ¡ Ä¸Ã³ ¾Ë¸²
+                // Ä¶ï¿½ï¿½ï¿½ê·¹ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä¸Ã³ ï¿½Ë¸ï¿½
                 string corner = msg["corner"]?.ToString();
                 JArray ip = (JArray)msg["iris_pos"];
                 Debug.Log($"[UDPReceive] Captured {corner} = ({ip[0]}, {ip[1]})");
@@ -138,19 +130,19 @@ public class UDPManager : MonoBehaviour
 
             case "calibration_complete":
                 Debug.Log("[UDPReceive] Calibration complete");
-                // TODO: Æ®·¡Å· ¸ðµå·Î UI ÀüÈ¯
+                // TODO: Æ®ï¿½ï¿½Å· ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½È¯
                 break;
 
             case "position":
-                // Æ®·¡Å· Áß ¸ÅÇÎµÈ È­¸é ÁÂÇ¥ ¼ö½Å
+                // Æ®ï¿½ï¿½Å· ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ È­ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
                 JArray sp = (JArray)msg["screen_pos"];
                 Debug.Log($"[UDPReceive] Screen pos = ({sp[0]}, {sp[1]})");
-                // TODO: °ÔÀÓ ¿ÀºêÁ§Æ® ÀÌµ¿
+                // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ìµï¿½
                 break;
 
             case "pause":
                 Debug.Log("[UDPReceive] Paused");
-                // TODO: °ÔÀÓ ¶Ç´Â UI ÀÏ½ÃÁ¤Áö Ã³¸®
+                // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ UI ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
                 break;
 
             case "resume":
@@ -159,7 +151,7 @@ public class UDPManager : MonoBehaviour
 
             case "kill":
                 Debug.Log("[UDPReceive] Kill signal received");
-                // TODO: ¾ÖÇÃ¸®ÄÉÀÌ¼Ç Á¾·á or ¾À ¸®¼Â
+                // TODO: ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ or ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 break;
 
             default:
@@ -169,7 +161,7 @@ public class UDPManager : MonoBehaviour
     }
 
     /// <summary>
-    /// È­¸é Å©±â Á¤º¸ Àü¼Û
+    /// È­ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     void SendScreenSize(int w, int h)
     {
@@ -182,11 +174,11 @@ public class UDPManager : MonoBehaviour
 
         byte[] data = Encoding.UTF8.GetBytes(msg.ToString(Formatting.None));
         sendClient.Send(data, data.Length, IpEndPoint);
-        Debug.Log($"[UDP] Sent ¡æ {msg}");
+        Debug.Log($"[UDP] Sent ï¿½ï¿½ {msg}");
     }
 
     /// <summary>
-    /// Ä¶¸®ºê·¹ÀÌ¼Ç ¿äÃ» Àü¼Û (corner: "lt","lb","rt","rb")
+    /// Ä¶ï¿½ï¿½ï¿½ê·¹ï¿½Ì¼ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½ (corner: "lt","lb","rt","rb")
     /// </summary>
     public void SendCalibrationRequest(string corner)
     {
@@ -199,7 +191,7 @@ public class UDPManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Ä¸Ã³ ¿Ï·á ½ÅÈ£ Àü¼Û
+    /// Ä¸Ã³ ï¿½Ï·ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SendCaptured(string corner, Vector2 irisPos)
     {
@@ -214,7 +206,7 @@ public class UDPManager : MonoBehaviour
 
 
     /// <summary>
-    /// ÀÏ½ÃÁ¤Áö ½ÅÈ£ Àü¼Û
+    /// ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SendPause()
     {
@@ -223,7 +215,7 @@ public class UDPManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Àç°³ ½ÅÈ£ Àü¼Û
+    /// ï¿½ç°³ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SendResume()
     {
@@ -232,7 +224,7 @@ public class UDPManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Á¾·á ½ÅÈ£ Àü¼Û
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SendKill()
     {
@@ -241,7 +233,7 @@ public class UDPManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ³»ºÎ °øÅë Àü¼Û ¸Þ¼­µå
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½
     /// </summary>
     private void Send(JObject msg)
     {
@@ -253,7 +245,7 @@ public class UDPManager : MonoBehaviour
 
     
     /// <summary>
-    /// ¼ÒÄÏ ´Ý±â
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ý±ï¿½
     /// </summary>
     public void Close()
     {
@@ -262,7 +254,7 @@ public class UDPManager : MonoBehaviour
 
     void OnDestroy()
     {
-        // Á¾·á ½Ã ½º·¹µå¿Í ¼ÒÄÏ Á¤¸®
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (receiveThread != null && receiveThread.IsAlive)
             receiveThread.Abort();
         sendClient.Close();
