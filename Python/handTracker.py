@@ -3,6 +3,8 @@ from cvzone.HandTrackingModule import HandDetector
 import mediapipe as mp
 import socket
 
+# TODO : hands나 eye가 없을 때 예외처리 추가하기
+
 # Parameters
 width, height = 1920, 1080
 
@@ -24,7 +26,6 @@ face_mesh = mp_face_mesh.FaceMesh(static_image_mode=False,
 # UDP sockets
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 handAddressPort = ("127.0.0.1", 5052)
-eyeAddressPort = ("127.0.0.1", 5053)
 
 # Iris landmarks (왼쪽, 오른쪽)
 iris_indices = [468, 473]
@@ -37,13 +38,13 @@ while True:
     # 1) Hand Detection
     hands, img = handDetector.findHands(img, flipType = True) # flipType = True: 좌우 반전
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    data = []
 
     if hands:
-        lmList = hands[0]['lmList']
-        data = []
+        lmList = hands[0]['lmList']        
         for x, y, z in lmList:
             data.extend([x, height - y, z])
-        sock.sendto(str.encode(str(data)), handAddressPort)
+
 
      # MediaPipe는 RGB 이미지 입력 필요
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -72,8 +73,9 @@ while True:
             cy = (cry + cly) // 2
             cv2.circle(img, (cx, cy), 3, (0, 0, 255), -1)
             # ★ eye_data 생성 및 UDP 전송 추가 부분 ★
-            eye_data = [clx, h - cly, crx, h - cry]
-            sock.sendto(str.encode(str(eye_data)), eyeAddressPort)
+            data.extend([clx, h - cly, crx, h - cry])
+    
+    sock.sendto(str.encode(str(data)), handAddressPort)
 
     cv2.imshow("img", img)
 

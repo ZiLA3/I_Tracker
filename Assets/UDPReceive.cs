@@ -10,11 +10,10 @@ public class UDPReceive : MonoBehaviour
 
     Thread receiveThread;
     UdpClient client;
-    public int port = 5052;
+    public int handPort = 5052;
     public bool startRecieving = true;
     public bool printToConsole = false;
     public string data;
-
 
     public void Start()
     {
@@ -30,7 +29,7 @@ public class UDPReceive : MonoBehaviour
     private void ReceiveData()
     {
 
-        client = new UdpClient(port);
+        client = new UdpClient(handPort);
         while (startRecieving)
         {
             try
