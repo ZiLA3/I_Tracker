@@ -1,129 +1,93 @@
 import cv2 as cv
-import socket
+import asyncio
 import json
 import time
-import threading
 from xyMapper import xyMapper
 from irisTracker import irisTracker
+from udpSocket import UDPSocket
 
-# Unity와의 UDP 통신 설정
-UDP_IP = "127.0.0.1"  # localhost
-UDP_PORT_SEND = 5000  # 유니티로 전송할 포트
-UDP_PORT_RECEIVE = 5001  # 유니티에서 수신할 포트
-
-# 송신용 소켓
-send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-# 수신용 소켓
-receive_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-receive_sock.bind((UDP_IP, UDP_PORT_RECEIVE))
-receive_sock.settimeout(0.1)  # 블로킹 방지를 위한 타임아웃 설정
-
-# 화면 크기 설정 (예시, 실제 화면 크기는 유니티에서 전달받음)
-screen_size = (1920, 1080)
-
-# 프로그램 상태 변수
+# 전역 변수
 running = True
 paused = False
 calibration_mode = True
 calibration_points = {}
+screen_size = (1920, 1080)  # 기본값, 유니티에서 실제 값 수신
 
-# MediaPipe를 이용한 홍채 좌표 인식 클래스
-
-# Unity에 메시지 전송 함수
-def send_to_unity(data):
-    message = json.dumps(data).encode('utf-8')
-    send_sock.sendto(message, (UDP_IP, UDP_PORT_SEND))
-
-# Unity에서 메시지 수신 함수
-def receive_from_unity():
+# 비동기 메인 함수
+async def main():
     global running, paused, calibration_mode, calibration_points, screen_size
     
-    try:
-        data, _ = receive_sock.recvfrom(1024)
-        message = json.loads(data.decode('utf-8'))
-        message_type = message.get('type')
-        
-        if message_type == 'screen_size':
-            # 화면 크기 정보 수신
-            screen_size = (message['width'], message['height'])
-            print(f"화면 크기 수신: {screen_size}")
-            return True
-        
-        elif message_type == 'calibration_request':
-            # 캘리브레이션 요청 수신
-            corner = message.get('corner')
-            print(f"캘리브레이션 요청: {corner} 코너를 바라봐주세요.")
-            return True
-        
-        elif message_type == 'captured':
-            # 캡처 신호 수신 (유니티에서 캡처 버튼 클릭 시)
-            corner = message.get('corner')
-            iris_pos = message.get('iris_pos')
-            if corner and iris_pos:
-                calibration_points[corner] = iris_pos
-                print(f"{corner} 위치 캡처됨: {iris_pos}")
-            return True
-        
-        elif message_type == 'pause':
-            # 일시정지 신호 수신
-            paused = True
-            print("일시정지됨")
-            return True
-        
-        elif message_type == 'resume':
-            # 재개 신호 수신
-            paused = False
-            print("재개됨")
-            return True
-        
-        elif message_type == 'kill':
-            # 종료 신호 수신
-            running = False
-            print("종료 신호 수신")
-            return True
-        
-        return False
-    
-    except socket.timeout:
-        # 타임아웃 시 무시
-        return False
-    except Exception as e:
-        print(f"메시지 수신 오류: {e}")
-        return False
-
-# 유니티 메시지 수신 스레드
-def receive_thread():
-    global running
-    
-    while running:
-        receive_from_unity()
-        time.sleep(0.01)  # CPU 사용량 감소
-
-# 메인 함수
-def main():
-    global running, paused, calibration_mode, calibration_points
+    # UDP 소켓 초기화
+    udp = UDPSocket()
     
     # 홍채 트래커 초기화
-
     iris = irisTracker()
     mapper = None
     
     # 유니티에 시작 신호 전송
-    send_to_unity({"type": "start", "screen_size": screen_size})
+    udp.send({"type": "start", "screen_size": screen_size})
     
-    # 메시지 수신 스레드 시작
-    thread = threading.Thread(target=receive_thread, daemon=True)
-    thread.start()
+    # 콜백 함수 등록
+    def on_screen_size(message):
+        global screen_size
+        screen_size = (message['width'], message['height'])
+        print(f"화면 크기 수신: {screen_size}")
+        return True
+    
+    def on_calibration_request(message):
+        corner = message.get('corner')
+        print(f"캘리브레이션 요청: {corner} 코너를 바라봐주세요.")
+        return True
+    
+    def on_captured(message):
+        global calibration_points
+        corner = message.get('corner')
+        iris_pos = message.get('iris_pos')
+        if corner and iris_pos:
+            calibration_points[corner] = iris_pos
+            print(f"{corner} 위치 캡처됨: {iris_pos}")
+        return True
+    
+    def on_pause(message):
+        global paused
+        paused = True
+        print("일시정지됨")
+        return True
+    
+    def on_resume(message):
+        global paused
+        paused = False
+        print("재개됨")
+        return True
+    
+    def on_kill(message):
+        global running
+        running = False
+        print("종료 신호 수신")
+        return False  # 수신 루프 종료
+    
+    # 콜백 등록
+    udp.register_callback('screen_size', on_screen_size)
+    udp.register_callback('calibration_request', on_calibration_request)
+    udp.register_callback('captured', on_captured)
+    udp.register_callback('pause', on_pause)
+    udp.register_callback('resume', on_resume)
+    udp.register_callback('kill', on_kill)
+    
+    # 비동기 리스너 시작
+    listener_task = asyncio.create_task(udp.start_listening())
     
     try:
+        # 메인 처리 루프
         while running:
             if paused:
                 # 일시정지 상태에서 키 입력 대기
                 key = cv.waitKey(100) & 0xFF
                 if key == 112:  # 'p' 키로 재개
                     paused = False
-                    send_to_unity({"type": "resume"})
+                    udp.send({"type": "resume"})
+                # CPU 사용량 감소를 위한 짧은 대기
+                await asyncio.sleep(0.01)
                 continue
             
             # 홍채 위치 가져오기
@@ -132,7 +96,6 @@ def main():
             if iris_position and image is not None:
                 if calibration_mode:
                     # 캘리브레이션 모드
-                    # Unity로부터 captured 시그널을 기다림
                     cv.putText(image, "Calibration Mode", (10, 30), 
                               cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     
@@ -141,7 +104,7 @@ def main():
                               (10, 60), cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     
                     # 유니티에 현재 홍채 위치 전송 (캡처를 위해)
-                    send_to_unity({
+                    udp.send({
                         "type": "iris_position",
                         "position": iris_position
                     })
@@ -158,7 +121,7 @@ def main():
                         
                         # 캘리브레이션 완료
                         calibration_mode = False
-                        send_to_unity({"type": "calibration_complete"})
+                        udp.send({"type": "calibration_complete"})
                         print("캘리브레이션 완료, 트래킹 시작")
                 
                 else:
@@ -168,7 +131,7 @@ def main():
                         screen_pos = mapper.map_coordinates(iris_position)
                         
                         # Unity로 좌표 전송
-                        send_to_unity({
+                        udp.send({
                             "type": "position",
                             "screen_pos": screen_pos
                         })
@@ -186,7 +149,7 @@ def main():
                           cv.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                 
                 # 화면 표시
-                cv.imshow('I-', image)
+                cv.imshow('I-Tracker', image)
             
             # 키 입력 처리
             key = cv.waitKey(5) & 0xFF
@@ -194,13 +157,30 @@ def main():
                 running = False
             elif key == 112:  # 'p' (일시정지)
                 paused = True
-                send_to_unity({"type": "pause"})
+                udp.send({"type": "pause"})
+            
+            # 비동기 처리를 위해 짧은 대기
+            await asyncio.sleep(0.01)
     
     finally:
         # 종료 신호 전송 및 정리
-        send_to_unity({"type": "kill"})
+        udp.send({"type": "kill"})
         iris.release()
         cv.destroyAllWindows()
+        udp.close()
+        # 리스너 태스크 취소
+        if not listener_task.done():
+            listener_task.cancel()
+            try:
+                await listener_task
+            except asyncio.CancelledError:
+                pass
 
+# 비동기 실행
 if __name__ == "__main__":
-    main()
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("프로그램이 사용자에 의해 중단되었습니다.")
+    finally:
+        cv.destroyAllWindows()
