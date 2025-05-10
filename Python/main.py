@@ -4,7 +4,7 @@ import json
 import time
 from xyMapper import xyMapper
 from irisTracker import irisTracker
-from udpSocket import UDPSocket
+from UDPManager import UDPManager
 
 # 전역 변수
 running = True
@@ -18,7 +18,7 @@ async def main():
     global running, paused, calibration_mode, calibration_points, screen_size
     
     # UDP 소켓 초기화
-    udp = UDPSocket()
+    udp = UDPManager()
     
     # 홍채 트래커 초기화
     iris = irisTracker()

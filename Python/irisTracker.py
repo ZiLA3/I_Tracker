@@ -2,7 +2,7 @@ import mediapipe as mp
 import cv2 as cv
 
 class irisTracker:
-    def __init__(self, camInt=0):
+    def __init__(self, camera=cv.VideoCapture(0)):
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             static_image_mode=False,
@@ -11,12 +11,12 @@ class irisTracker:
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5
         )
-        self.camera = cv.VideoCapture(camInt)
+        self.camera = camera
     
     def get_iris_position(self):
         """현재 홍채 위치를 반환"""
         success, image = self.camera.read()
-        image = cv.flip(image, 1) # 카메라 좌우반전하여 정확한 위치를 구함. (플레이어의 시점)
+        image = cv.flip(image, 1) # 카메라 좌우반전
         if not success:
             return None, None
         
@@ -43,7 +43,7 @@ class irisTracker:
                 cx = (clx + crx) // 2
                 cy = (cly + cry) // 2
                 
-                # 화면에 홍채 위치 표시
+                # 화면에 홍채 위치 표시 (디버깅용)
                 cv.circle(image, (clx, cly), 3, (0, 255, 0), -1)  # 왼쪽 홍채
                 cv.circle(image, (crx, cry), 3, (0, 255, 0), -1)  # 오른쪽 홍채
                 cv.circle(image, (cx, cy), 3, (0, 0, 255), -1)    # 홍채 중심
@@ -51,7 +51,3 @@ class irisTracker:
                 iris_position = (cx, cy)
         
         return iris_position, image
-    
-    def release(self):
-        """리소스 해제"""
-        self.camera.release()
