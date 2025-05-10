@@ -120,8 +120,8 @@ async def main():
                 await asyncio.sleep(0.01)
     
     finally:
-        # 종료 신호 전송 및 정리
-        udp.send({"type": "killed"})
+        # 종료 완료 신호 전송 및 정리
+        udp.send({"type": "kill"})
         camera.release()
         cv.destroyAllWindows()
         udp.close()

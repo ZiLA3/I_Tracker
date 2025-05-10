@@ -15,20 +15,20 @@ def on_captured(message):
         print(f"{corner} 위치 캡처됨: {iris_pos}")
     return True
 
-def on_pause(message):
+def on_pause():
     global paused
     paused = True
     print("일시정지됨")
     return True
 
-def on_resume(message):
+def on_resume():
     global paused
     paused = False
     print("재개됨")
     return True
 
-def on_kill(message):
+def on_kill():
     global running
     running = False
     print("종료 신호 수신")
-    return False  # 수신 루프 종료
+    return False
