@@ -31,7 +31,7 @@ class UDPManager:
         message = json.dumps(data).encode('utf-8')
         self.send_sock.sendto(message, (self.ip, self.send_port))
 
-    def receive(self):
+    def receive(self, message_type=None):
         """
         초기화를 위한 초기 동기 방식의 메시지 수신
         절대로 비동기 수신중 사용하지 마시오!!!!!!
@@ -44,7 +44,8 @@ class UDPManager:
                 
                 try:
                     message = json.loads(data.decode('utf-8'))
-                    message_type = message.get('type')
+                    if message_type is None:
+                        message_type = message.get('type')
                     
                     # 등록된 콜백 실행
                     if message_type in self.callbacks:

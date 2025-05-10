@@ -1,8 +1,6 @@
 import cv2 as cv
 import asyncio
 import threading
-import json
-import time
 import callbacks
 from UDPManager import UDPManager
 from handTracker import handTracker
@@ -38,6 +36,7 @@ async def main():
     udp.register_callback('kill', callbacks.on_kill)
     # 유니티에 시작 신호 전송
     udp.send({"type": "start"})
+    udp.receive(message_type='screen_size') # 스크린 사이즈 기다림 (동기)
 
     # 트래커 초기화
     camera = cv.VideoCapture(CAM_INT)
@@ -94,14 +93,17 @@ async def main():
                 # 홍채 위치 매핑
                 iris_position_origin, image = iris.get_iris_position()
                 iris_position = mapper.map_coordinates(iris_position_origin)
+                # 손 위치
+                hand_position, image = hand.get_hand_position()
                 
-                # Unity로 좌표 전송
+                # Unity로 좌표 전송: iris, hand
                 udp.send({
                     "type": "iris_position",
-                    "position": iris_position
+                    "iris_pos": iris_position,
+                    "hand_pos": hand_position
                 })
                 
-                # 화면에 매핑된 좌표 표시
+                # 화면에 매핑된 iris 좌표 표시
                 cv.putText(image, f"Screen: {iris_position[0]:.1f}, {iris_position[1]:.1f}", 
                             (10, 30), cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
                 
