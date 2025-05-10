@@ -1,7 +1,5 @@
 # 콜백 함수 모음
 
-
-
 def on_screen_size(message):
     global screen_size
     screen_size = (message['width'], message['height'])
