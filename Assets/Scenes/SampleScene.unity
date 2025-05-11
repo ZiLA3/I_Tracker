@@ -920,7 +920,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 570183855}
-  - component: {fileID: 570183856}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -946,43 +945,6 @@ Transform:
   - {fileID: 210674082}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &570183856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 570183854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f108a94ae519fcb46ba94fde947d9aa2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  udpReceive: {fileID: 967971034}
-  handPoints:
-  - {fileID: 728352653}
-  - {fileID: 2011348971}
-  - {fileID: 1242288359}
-  - {fileID: 482898997}
-  - {fileID: 332244180}
-  - {fileID: 587455215}
-  - {fileID: 1170373369}
-  - {fileID: 1775028432}
-  - {fileID: 1469906015}
-  - {fileID: 379459377}
-  - {fileID: 1594779037}
-  - {fileID: 1668001964}
-  - {fileID: 1507004951}
-  - {fileID: 1067370733}
-  - {fileID: 1734045772}
-  - {fileID: 1172302778}
-  - {fileID: 48013039}
-  - {fileID: 1301459427}
-  - {fileID: 1829365224}
-  - {fileID: 764238127}
-  - {fileID: 83455769}
-  leftEye: {fileID: 291382928}
-  rightEye: {fileID: 210674078}
 --- !u!1 &587455215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1553,13 +1515,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 967971032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35f20d8b1dc15254f80a969b17a5c765, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f8a6122a477fa34da57fa5e23a6f38e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handPort: 5052
-  startRecieving: 1
-  printToConsole: 0
-  data: 
+  listenPort: 5000
+  sendPort: 5001
 --- !u!1 &973317691
 GameObject:
   m_ObjectHideFlags: 0

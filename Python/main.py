@@ -23,8 +23,6 @@ calibration_points = {}
 screen_size = (1920, 1080)  # 기본값, 유니티에서 실제 값 수신
 
 # 비동기 메인 함수
-
-
 async def main():
     global running, paused, calibration_mode, calibration_points, screen_size
 
@@ -47,12 +45,14 @@ async def main():
 
     # 캘리 모드 플래그로 캘리 시도
     mapper = None
+
     while calibration_mode:
         # 홍채 위치 가져오기
         iris_position_origin, image = iris.get_iris_position()
 
         if iris_position_origin and image is not None:
             # 캘리브레이션 모드
+
             cv.putText(image, "Calibration Mode", (10, 30),
                        cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
@@ -62,7 +62,7 @@ async def main():
 
             # 유니티에 현재 홍채 위치 전송 (캡처를 위해)
             udp.send({
-                "type": "iris_position_origin",
+                "type": "iris_position",
                 "position": iris_position_origin
             })
 
@@ -84,7 +84,6 @@ async def main():
                 calibration_mode = False
                 udp.send({"type": "calibration_complete"})
                 print("캘리브레이션 완료, 트래킹 시작")
-
     # UDP Listening 시작 (멀티 쓰레딩)
     threading.Thread(target=udp.start_listening, daemon=True).start()
     try:
@@ -120,8 +119,10 @@ async def main():
                     cv.putText(image, status, (10, image.shape[0] - 20),
                                cv.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
 
-                    # 화면 표시 (디버깅용)
+                    # 화면 표시 (디버깅용) 
                     cv.imshow('I-Tracker', image)
+                    if cv.waitKey(1) & 0xFF == 27:
+                        break
 
                 # 비동기 처리를 위해 짧은 대기
                 await asyncio.sleep(0.01)

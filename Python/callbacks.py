@@ -16,7 +16,6 @@ def on_captured(message):
         print(f"{corner} 위치 캡처됨: {iris_pos}")
     return True
 
-
 def on_pause():
     global paused
     paused = True

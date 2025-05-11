@@ -64,24 +64,19 @@ public class UDPManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            SendCalibrationRequest("lt");
             current_corner = new bool[] { false, false };
         }
 
-
         if (Input.GetKeyDown(KeyCode.F2))
         {
-            SendCalibrationRequest("lb");
             current_corner = new bool[] { false, true };
         }
         if (Input.GetKeyDown(KeyCode.F3))
         {
-            SendCalibrationRequest("rt");
             current_corner = new bool[] { true, false };
         }
         if (Input.GetKeyDown(KeyCode.F4))
         {
-            SendCalibrationRequest("rb");
             current_corner = new bool[] { true, true };
         }
     }
@@ -100,8 +95,6 @@ public class UDPManager : MonoBehaviour
         }
     }
 
-    
-
     void ProcessMessage(string json)
     {
         // 4) JSON 파싱
@@ -110,59 +103,26 @@ public class UDPManager : MonoBehaviour
 
         switch (type)
         {
-            case "start":
-                // 화면 크기 정보
-                JArray sz = (JArray)msg["screen_size"];
-                int w = sz?[0]?.Value<int>() ?? 1920;
-                int h = sz?[1]?.Value<int>() ?? 1080;
-                Debug.Log($"[UDPReceive] Start: screen size = {w}×{h}");
-                break;
-
             case "iris_position":
                 // 캘리브레이션 중 홍채 좌표 스트리밍
                 JArray p = (JArray)msg["position"];
                 float ix = p?[0]?.Value<float>() ?? 0f;
                 float iy = p?[1]?.Value<float>() ?? 0f;
                 iris_position = new Vector2(ix, iy);
-                Debug.Log($"[UDPReceive] Iris pos = ({ix:F1}, {iy:F1})");
+                Debug.Log($"Receive : Iris pos = ({ix:F1}, {iy:F1})");
                 // TODO: 화면에 마커 이동
                 break;
-
-            case "captured":
-                // 캘리브레이션 지점 캡처 알림
-                string corner = msg["corner"]?.ToString();
-                JArray ip = (JArray)msg["iris_pos"];
-                Debug.Log($"[UDPReceive] Captured {corner} = ({ip[0]}, {ip[1]})");
+            case "start":
+                // 캘리브레이션 시작
+                Debug.Log("Receive : 시작");
                 break;
-
             case "calibration_complete":
-                Debug.Log("[UDPReceive] Calibration complete");
-                // TODO: 트래킹 모드로 UI 전환
+                // 캘리브레이션 완료
+                Debug.Log("Receive : 완료");
+                // TODO: 게임 진행
                 break;
-
-            case "position":
-                // 트래킹 중 매핑된 화면 좌표 수신
-                JArray sp = (JArray)msg["screen_pos"];
-                Debug.Log($"[UDPReceive] Screen pos = ({sp[0]}, {sp[1]})");
-                // TODO: 게임 오브젝트 이동
-                break;
-
-            case "pause":
-                Debug.Log("[UDPReceive] Paused");
-                // TODO: 게임 또는 UI 일시정지 처리
-                break;
-
-            case "resume":
-                Debug.Log("[UDPReceive] Resumed");
-                break;
-
-            case "kill":
-                Debug.Log("[UDPReceive] Kill signal received");
-                // TODO: 애플리케이션 종료 or 씬 리셋
-                break;
-
             default:
-                Debug.Log($"[UDPReceive] Unknown type: {type}");
+                Debug.Log("Receive : 미확인 메시지");
                 break;
         }
     }
@@ -181,20 +141,7 @@ public class UDPManager : MonoBehaviour
 
         byte[] data = Encoding.UTF8.GetBytes(msg.ToString(Formatting.None));
         sendClient.Send(data, data.Length, IpEndPoint);
-        Debug.Log($"[UDP] Sent → {msg}");
-    }
-
-    /// <summary>
-    /// 캘리브레이션 요청 전송 (corner: "lt","lb","rt","rb")
-    /// </summary>
-    public void SendCalibrationRequest(string corner)
-    {
-        var msg = new JObject
-        {
-            ["type"] = "calibration_request",
-            ["corner"] = corner
-        };
-        Send(msg);
+        Debug.Log("Send : Screen Size");
     }
 
     /// <summary>
@@ -210,7 +157,6 @@ public class UDPManager : MonoBehaviour
         };
         Send(msg);
     }
-
 
     /// <summary>
     /// 일시정지 신호 전송
@@ -250,12 +196,11 @@ public class UDPManager : MonoBehaviour
         Debug.Log($"[UdpSender] Sent: {json}");
     }
 
-    
     /// <summary>
     /// 소켓 닫기
     /// </summary>
     public void Close()
-    {
+    {   
         sendClient.Close();
     }
 
@@ -264,6 +209,7 @@ public class UDPManager : MonoBehaviour
         // 종료 시 스레드와 소켓 정리
         if (receiveThread != null && receiveThread.IsAlive)
             receiveThread.Abort();
+
         sendClient.Close();
     }
 }
