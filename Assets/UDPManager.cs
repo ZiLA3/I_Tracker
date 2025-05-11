@@ -15,10 +15,7 @@ public class UDPManager : MonoBehaviour
     Thread receiveThread;
     Vector2 iris_position;
 
-    bool lt_corner;
-    bool lb_corner;
-    bool rt_corner;
-    bool rb_corner;
+    bool[] current_corner = { false, false }; // 0: x, 1: y
 
     void Start()
     {
@@ -41,49 +38,51 @@ public class UDPManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (lt_corner)
-                SendCaptured("lt", iris_position);
-            else if (lb_corner)
-                SendCaptured("lb", iris_position);
-            else if (rt_corner)
-                SendCaptured("rt", iris_position);
-            else if (rb_corner)
-                SendCaptured("rb", iris_position);
+            if (current_corner[0])
+            {
+                if (current_corner[1])
+                {
+                    SendCaptured("lt", iris_position);
+                }
+                else
+                {
+                    SendCaptured("lb", iris_position);
+                }
+            }
+            else 
+            {
+                if (current_corner[1])
+                { 
+                    SendCaptured("rt", iris_position);
+                }
+                else
+                {
+                    SendCaptured("rb", iris_position);
+                }
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
             SendCalibrationRequest("lt");
-            lt_corner = true;
-            lb_corner = false;
-            rt_corner = false;
-            rb_corner = false;
+            current_corner = new bool[] { false, false };
         }
 
 
         if (Input.GetKeyDown(KeyCode.F2))
         {
             SendCalibrationRequest("lb");
-            lb_corner = true;
-            lt_corner = false;
-            rt_corner = false;
-            rb_corner = false;
+            current_corner = new bool[] { false, true };
         }
         if (Input.GetKeyDown(KeyCode.F3))
         {
             SendCalibrationRequest("rt");
-            rt_corner = true;
-            lt_corner = false;
-            lb_corner = false;
-            rb_corner = false;
+            current_corner = new bool[] { true, false };
         }
         if (Input.GetKeyDown(KeyCode.F4))
         {
             SendCalibrationRequest("rb");
-            rb_corner = true;
-            lt_corner = false;
-            lb_corner = false;
-            rt_corner = false;
+            current_corner = new bool[] { true, true };
         }
     }
 
