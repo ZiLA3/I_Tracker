@@ -44,8 +44,7 @@ while True:
         lmList = hands[0]['lmList']        
         for x, y, z in lmList:
             data.extend([x, height - y, z])
-
-
+            
      # MediaPipe는 RGB 이미지 입력 필요
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = face_mesh.process(img_rgb)
