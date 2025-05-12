@@ -470,7 +470,7 @@ GameObject:
   - component: {fileID: 88352254}
   - component: {fileID: 88352255}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Test Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3448,6 +3448,7 @@ MonoBehaviour:
   rightEye: {fileID: 717465322}
   handPoints: []
   sphereCastRadius: 0.13
+  maxDistance: 10
   drawGizmosOffset: {x: 0, y: 0, z: 0.34}
   drawGizmos: 1
 --- !u!1 &1829365224

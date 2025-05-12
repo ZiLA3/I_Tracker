@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class FaceLandMark : MonoBehaviour
+public class EyeCheck : MonoBehaviour
 {
     [SerializeField] Vector3 eyePointOffset;
     [SerializeField] Vector3 handPointOffset;
@@ -14,23 +14,6 @@ public class FaceLandMark : MonoBehaviour
     
     const int eyePointCounts = 2;
     const int handPointCounts = 21;
-
-    private bool HasEyePoint() { return true; }
-    private bool HasHandPoint() { return true; }
-    public void DataProcessing(string str) 
-    {
-        if (HasEyePoint())
-        {
-            // 눈 좌표 설정
-        }
-
-        if (HasHandPoint())
-        {
-            // 손 좌표 설정
-        }
-    }
-
-    public string ToStr() { return "Test"; } // 이거는 UDP에서 만드는 게 낫지 않나? ... DataProcessing(ToStr(ourData));
     
     // Test
     Interactable currentInteractable;
@@ -54,7 +37,7 @@ public class FaceLandMark : MonoBehaviour
         {
             if(currentInteractable != null)
             {
-                currentInteractable.Interact();
+                currentInteractable.Interact(); 
                 interactedObjects.Add(currentInteractable.transform.root);
             }
         }
