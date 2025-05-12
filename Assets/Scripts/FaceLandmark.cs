@@ -1,8 +1,8 @@
 using UnityEngine;
 public static class FaceLandmark
 {
-    public static Vector2 EyePoint;
-    public static readonly Vector3[] HandPoints = new Vector3[21];
+    public static Vector2 EyePoint { get; private set; }
+    public static Vector3[] HandPoints { get; private set; } = new Vector3[21];
 
     public static bool HasEyePoint => EyePoint != -Vector2.one;
     public static bool HasHandPoint => HandPoints[0] != -Vector3.one;
@@ -42,5 +42,11 @@ public static class FaceLandmark
         }
 
         return str;
+    }
+
+    public static void Debug()
+    {
+        DataProcessing(UdpManager.DebugString);
+        UnityEngine.Debug.Log(ToStr());
     }
 }
