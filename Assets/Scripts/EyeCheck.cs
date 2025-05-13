@@ -55,7 +55,7 @@ public class EyeCheck : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(eyePoint);
 
         // 2) RaycastHit 변수 선언
-        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, interactableLayer))
+        if (Physics.SphereCast(ray, sphereCastRadius, out RaycastHit hit, maxDistance, interactableLayer))
         {
             if (hit.transform.root.GetComponent<Interactable>()) 
             {
