@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -7,27 +7,26 @@ public class EyeCheck : MonoBehaviour
 {
     [Header("Eye Point Offset")]
     [SerializeField] Vector3 transformOffset;
-    [SerializeField] Vector3 handPointOffset;
 
     [Header("Eye Casting")]
     [SerializeField] float sphereCastRadius = 0.2f;
     [SerializeField] float maxDistance = 20f;
-    [SerializeField] bool drawGizmos = true;
-    [SerializeField] Vector3 drawGizmosOffset;
 
+    LayerMask interactableLayer;
     Interactable currentInteractable;
     HashSet<Transform> interactedObjects;
 
     private void Start()
     {
         interactedObjects = new HashSet<Transform>();
+
         currentInteractable = null;
+        interactableLayer = LayerMask.GetMask("Interactable"); // "Interactable" ë ˆì´ì–´ë¥¼ ê°€ì§„ ì˜¤ë¸Œì íŠ¸ë§Œ ìƒí˜¸ì‘ìš© ê°€ëŠ¥
     }
 
-    private void Update() 
+    private void Update()
     {
-        transform.position = new Vector3(FaceLandmark.EyePoint.x, FaceLandmark.EyePoint.y) + transformOffset;
-
+        EyeVisualize(); // ëˆˆ ìœ„ì¹˜ ì‹œê°í™”
         InteractCheck();
 
         if (Input.GetKeyDown(KeyCode.Space)) 
@@ -40,36 +39,33 @@ public class EyeCheck : MonoBehaviour
         }
     }
 
-    // Á¶°Ç ÁÂ¿ì ´«ÀÌ ¹Ù¶óº¸´Â ´ë»ó ÀÏÄ¡
-    // ÀÌ¹Ì »óÈ£ÀÛ¿ëÇÑ ¿ÀºêÁ§Æ®´Â Á¦¿Ü
+    private void EyeVisualize() 
+    {
+        Vector3 screenPos = FaceLandmark.EyePoint;
+        screenPos.z = -Camera.main.transform.position.z;
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+
+        transform.position = worldPos + transformOffset;
+    }
 
     private void InteractCheck() 
     {
-        RaycastHit leftEyeHit;
+        Vector3 eyePoint = FaceLandmark.EyePoint;
+        // 1) í™”ë©´ìƒì˜ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¡œë¶€í„° Ray ìƒì„±
+        Ray ray = Camera.main.ScreenPointToRay(eyePoint);
 
-
-        if (Physics.SphereCast(transform.position, sphereCastRadius, transform.forward, out leftEyeHit, maxDistance))
+        // 2) RaycastHit ë³€ìˆ˜ ì„ ì–¸
+        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, interactableLayer))
         {
-            if (leftEyeHit.transform.root.GetComponent<Interactable>()) 
+            if (hit.transform.root.GetComponent<Interactable>()) 
             {
-                if (!interactedObjects.Contains(leftEyeHit.transform.root))
+                if (!interactedObjects.Contains(hit.transform.root)) 
                 {
-                    currentInteractable = leftEyeHit.transform.root.GetComponent<Interactable>();
+                    currentInteractable = hit.transform.root.GetComponent<Interactable>();
                     return;
                 }
             }
         }
-
         currentInteractable = null;
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (!drawGizmos)
-            return;
-        
-        Gizmos.color = Color.magenta;
-
-        Gizmos.DrawWireSphere(transform.position + drawGizmosOffset, sphereCastRadius);
     }
 }

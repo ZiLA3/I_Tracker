@@ -469,7 +469,7 @@ GameObject:
   m_Component:
   - component: {fileID: 88352254}
   - component: {fileID: 88352255}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Test Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -906,7 +906,7 @@ GameObject:
   - component: {fileID: 486850507}
   - component: {fileID: 486850506}
   - component: {fileID: 486850505}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1667,7 +1667,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   receivePort: 5052
   startReceiving: 1
-  printDebug: 1
+  printDebug: 0
   data: 
   targetIP: 127.0.0.1
   targetPort: 5053
@@ -3223,9 +3223,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transformOffset: {x: 0, y: 0, z: 0}
-  handPointOffset: {x: 0, y: 0, z: 0}
   sphereCastRadius: 0.13
-  maxDistance: 10
+  maxDistance: 30
   drawGizmos: 1
   drawGizmosOffset: {x: 0, y: 0, z: 0.34}
 --- !u!1 &1829365224

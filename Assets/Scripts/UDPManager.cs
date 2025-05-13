@@ -136,17 +136,7 @@ public class UdpManager : MonoBehaviour
 
     void Update()
     {
-        // 화면(스쿨린) 좌표
-        Vector3 screenPos = Input.mousePosition;
-        // 카메라 위치가 (0,0,-10) 이라면, Z=10 만큼 떨어진 평면(Z=0)에 투영
-        screenPos.z = -Camera.main.transform.position.z;
-
-        // 올바르게 월드 좌표로 변환
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
-
-        // 필요하다면 Z는 0으로 고정
-        worldPos.z = 0f;
-        _mousePosition = worldPos;
+        _mousePosition = Input.mousePosition;
     }
 
     private void OnDisable()
