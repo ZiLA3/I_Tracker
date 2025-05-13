@@ -1,10 +1,10 @@
 import cv2 as cv
 import time
 import callbacks
-import UDPManager
-import handTracker
-import irisTracker
-import xyMapper
+from UDPManager import UDPManager
+from handTracker import handTracker
+from irisTracker import irisTracker
+from xyMapper import xyMapper
 
 # 상수 선언
 CAM_INT = 0  # 카메라 번호 (0: 기본 카메라, 1,2,...: 추가 카메라)
@@ -32,7 +32,7 @@ def main():
     global capture_mode, calibration_points, screen_size
     
     # UDP 소켓 초기화
-    udp = UDPManager.UDPManager(IP, SEND_PORT, RECEIVE_PORT)  # UDP 통신 관리자 생성
+    udp = UDPManager(IP, SEND_PORT, RECEIVE_PORT)  # UDP 통신 관리자 생성
     # 콜백 등록
     udp.register_callback('screen_size', callbacks.on_screen_size)  # 화면 크기 수신 콜백
     udp.register_callback('captured', callbacks.on_captured)  # 캘리브레이션 포인트 캡처 콜백
@@ -43,8 +43,8 @@ def main():
     # Wait State (캘리브레이션 단계)
     # 트래커 초기화
     camera = cv.VideoCapture(CAM_INT)  # 카메라 초기화
-    iris = irisTracker.irisTracker(camera, DEBUG)  # 홍채 트래커 초기화
-    hand = handTracker.handTracker(camera, screen_size)  # 손 트래커 초기화
+    iris = irisTracker(camera, DEBUG)  # 홍채 트래커 초기화
+    hand = handTracker(camera, screen_size)  # 손 트래커 초기화
     mapper = None  # 좌표 매핑 객체 (캘리브레이션 후 초기화)
     
     # 캘리브레이션 모드 동작
@@ -54,7 +54,7 @@ def main():
         udp.receive("captured", pos)  # 캘리브레이션 신호 수신 및 처리
         
     # 캘리브레이션 완료 후 좌표 매퍼 초기화
-    mapper = xyMapper.xyMapper(
+    mapper = xyMapper(
         calibration_points["lt"],  # 좌상단 캘리브레이션 포인트
         calibration_points["rt"],  # 우상단 캘리브레이션 포인트
         calibration_points["lb"],  # 좌하단 캘리브레이션 포인트
