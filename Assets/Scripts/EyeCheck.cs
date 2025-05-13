@@ -5,22 +5,17 @@ using UnityEngine;
 
 public class EyeCheck : MonoBehaviour
 {
-    [SerializeField] Vector3 eyePointOffset;
+    [Header("Eye Point Offset")]
+    [SerializeField] Vector3 transformOffset;
     [SerializeField] Vector3 handPointOffset;
 
-    [SerializeField] Transform leftEye;
-    [SerializeField] Transform rightEye;
-    [SerializeField] Transform[] handPoints;
-    
-    const int eyePointCounts = 2;
-    const int handPointCounts = 21;
-    
-    // Test
-    Interactable currentInteractable;
+    [Header("Eye Casting")]
     [SerializeField] float sphereCastRadius = 0.2f;
     [SerializeField] float maxDistance = 20f;
-    [SerializeField] Vector3 drawGizmosOffset;
     [SerializeField] bool drawGizmos = true;
+    [SerializeField] Vector3 drawGizmosOffset;
+
+    Interactable currentInteractable;
     HashSet<Transform> interactedObjects;
 
     private void Start()
@@ -31,6 +26,8 @@ public class EyeCheck : MonoBehaviour
 
     private void Update() 
     {
+        transform.position = new Vector3(FaceLandmark.EyePoint.x, FaceLandmark.EyePoint.y) + transformOffset;
+
         InteractCheck();
 
         if (Input.GetKeyDown(KeyCode.Space)) 
@@ -41,8 +38,6 @@ public class EyeCheck : MonoBehaviour
                 interactedObjects.Add(currentInteractable.transform.root);
             }
         }
-
-        Debug.Log(currentInteractable);
     }
 
     // 조건 좌우 눈이 바라보는 대상 일치
@@ -51,30 +46,11 @@ public class EyeCheck : MonoBehaviour
     private void InteractCheck() 
     {
         RaycastHit leftEyeHit;
-        RaycastHit rightEyeHit;
-
-        bool[] hitObject = { false, false }; // 0: left, 1: right
 
 
-        if (Physics.SphereCast(leftEye.position, sphereCastRadius, leftEye.forward, out leftEyeHit, maxDistance))
+        if (Physics.SphereCast(transform.position, sphereCastRadius, transform.forward, out leftEyeHit, maxDistance))
         {
             if (leftEyeHit.transform.root.GetComponent<Interactable>()) 
-            {
-                hitObject[0] = true;
-            }
-        }
-           
-        if (Physics.SphereCast(rightEye.position, sphereCastRadius, rightEye.forward, out rightEyeHit, maxDistance))
-        {
-            if (rightEyeHit.transform.root.GetComponent<Interactable>())
-            {
-                hitObject[1] = true;
-            }
-        }
-
-        if (hitObject[0] && hitObject[1])
-        {
-            if (leftEyeHit.transform.root == rightEyeHit.transform.root)
             {
                 if (!interactedObjects.Contains(leftEyeHit.transform.root))
                 {
@@ -94,7 +70,6 @@ public class EyeCheck : MonoBehaviour
         
         Gizmos.color = Color.magenta;
 
-        Gizmos.DrawWireSphere(leftEye.position + drawGizmosOffset, sphereCastRadius);
-        Gizmos.DrawWireSphere(rightEye.position + drawGizmosOffset, sphereCastRadius);
+        Gizmos.DrawWireSphere(transform.position + drawGizmosOffset, sphereCastRadius);
     }
 }

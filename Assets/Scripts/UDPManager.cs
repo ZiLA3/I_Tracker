@@ -1,215 +1,157 @@
 using UnityEngine;
+using System;
+using System.Text;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using Newtonsoft.Json.Linq;
 using System.Threading;
-using Newtonsoft.Json;
 
-public class UDPManager : MonoBehaviour
+public class UdpManager : MonoBehaviour
 {
-    [SerializeField] int listenPort = 5000, sendPort = 5001;
-    UdpClient recvClient;
-    UdpClient sendClient;
-    IPEndPoint IpEndPoint;
-    Thread receiveThread;
-    Vector2 iris_position;
 
-    bool[] current_corner = { false, false }; // 0: x, 1: y
+    [Header("Receive")]
+    public int receivePort = 5052;
+    public bool startReceiving = true;
+    public bool printDebug = false;
+    public string data;
+
+    [Header("Send")]
+    public string targetIP = "127.0.0.1";
+    public int targetPort = 5053;
+
+    [Header("Debug")]
+    public bool useMousePoint = true;
+
+    private Thread _receiveThread;
+    private UdpClient _receiveClient;
+    private UdpClient _sendClient;
+    private Vector2 _mousePosition;
+
+    public const string DebugString =
+        "1,1##1,1,1/2,1,2/3,1,3/4,1,4/5,1,5/6,1,6/7,1,7/8,1,8/9,1,9/10,1,10/" +
+        "11,1,11/12,1,12/13,1,13/14,1,14/15,1,15/16,1,16/17,1,17/18,1,18/19,1,19/20,1,20/21,1,21";
+
+    private const string CalibrationStartSignal = "0,0";
+    private const string CalibrationEndSignal = "1,1";
+
+    private string GetWindowSizeString()
+    {
+        return $"{Screen.width}, {Screen.height}";
+    }
+
+    private void StartReceive()
+    {
+        _receiveThread = new Thread(Receive);
+        _receiveThread.IsBackground = true;
+        _receiveThread.Start();
+        Debug.Log("Start Receiving");
+    }
+
+    private void Receive()
+    {
+        _receiveClient = new UdpClient(receivePort);
+        Debug.Log("Receive...");
+        while (startReceiving)
+        {
+            if (useMousePoint)
+            {
+                var debugString = DebugString.Replace("1,1#", $"{_mousePosition.x},{_mousePosition.y}#");
+
+                if (printDebug)
+                {
+                    Debug.Log(debugString);
+                }
+
+                FaceLandmark.DataProcessing(debugString);
+                continue;
+            }
+
+            try
+            {
+                IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
+                byte[] dataByte = _receiveClient.Receive(ref anyIP);
+                data = Encoding.UTF8.GetString(dataByte);
+
+                if (printDebug)
+                {
+                    print(data);
+                }
+
+                FaceLandmark.DataProcessing(data);
+            }
+            catch (SocketException)
+            {
+                break;
+            }
+            catch (Exception e)
+            {
+                print(e.ToString());
+            }
+        }
+    }
+
+    private void StopReceive()
+    {
+        startReceiving = false;
+        _receiveClient?.Close();
+        if (_receiveThread != null && _receiveThread.IsAlive)
+            _receiveThread.Join();
+        Debug.Log("Stop Receiving");
+    }
+
+    private void StartSend()
+    {
+        StopSend();
+        _sendClient = new UdpClient();
+    }
+
+    public void Send(string message)
+    {
+        try
+        {
+            var dataBytes = Encoding.UTF8.GetBytes(message);
+            _sendClient.Send(dataBytes, dataBytes.Length, targetIP, targetPort);
+
+            if (printDebug)
+            {
+                print($"Sent: {message} to {targetIP}:{targetPort}");
+            }
+        }
+        catch (Exception err)
+        {
+            print(err.ToString());
+        }
+    }
+
+    private void StopSend()
+    {
+        _sendClient?.Close();
+    }
 
     void Start()
     {
-        recvClient = new UdpClient(listenPort);
-        sendClient = new UdpClient();
-        IpEndPoint = new IPEndPoint(IPAddress.Loopback, sendPort);
-
-        receiveThread = new Thread(ReceiveLoop);
-        receiveThread.IsBackground = true;
-        receiveThread.Start();
-        Debug.Log($"[UDP] Listening on {listenPort}");
+        StartSend();
+        StartReceive();
+        Send(CalibrationStartSignal);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            SendScreenSize(1920, 1080);
-        }
+        // 화면(스쿨린) 좌표
+        Vector3 screenPos = Input.mousePosition;
+        // 카메라 위치가 (0,0,-10) 이라면, Z=10 만큼 떨어진 평면(Z=0)에 투영
+        screenPos.z = -Camera.main.transform.position.z;
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (current_corner[0])
-            {
-                if (current_corner[1])
-                {
-                    SendCaptured("lt", iris_position);
-                }
-                else
-                {
-                    SendCaptured("lb", iris_position);
-                }
-            }
-            else 
-            {
-                if (current_corner[1])
-                { 
-                    SendCaptured("rt", iris_position);
-                }
-                else
-                {
-                    SendCaptured("rb", iris_position);
-                }
-            }
-        }
+        // 올바르게 월드 좌표로 변환
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
 
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            current_corner = new bool[] { false, false };
-        }
-
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
-            current_corner = new bool[] { false, true };
-        }
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            current_corner = new bool[] { true, false };
-        }
-        if (Input.GetKeyDown(KeyCode.F4))
-        {
-            current_corner = new bool[] { true, true };
-        }
+        // 필요하다면 Z는 0으로 고정
+        worldPos.z = 0f;
+        _mousePosition = worldPos;
     }
 
-    void ReceiveLoop()
+    private void OnDisable()
     {
-        var remoteEP = new IPEndPoint(IPAddress.Any, 0);
-        while (true)
-        {
-            try
-            {
-                byte[] data = recvClient.Receive(ref remoteEP);
-                ProcessMessage(Encoding.UTF8.GetString(data));
-            }
-            catch { break; }
-        }
-    }
-
-    void ProcessMessage(string json)
-    {
-        // 4) JSON 파싱
-        JObject msg = JObject.Parse(json);
-        string type = msg["type"]?.ToString();
-
-        switch (type)
-        {
-            case "iris_position":
-                // 캘리브레이션 중 홍채 좌표 스트리밍
-                JArray p = (JArray)msg["position"];
-                float ix = p?[0]?.Value<float>() ?? 0f;
-                float iy = p?[1]?.Value<float>() ?? 0f;
-                iris_position = new Vector2(ix, iy);
-                Debug.Log($"Receive : Iris pos = ({ix:F1}, {iy:F1})");
-                // TODO: 화면에 마커 이동
-                break;
-            case "start":
-                // 캘리브레이션 시작
-                Debug.Log("Receive : 시작");
-                break;
-            case "calibration_complete":
-                // 캘리브레이션 완료
-                Debug.Log("Receive : 완료");
-                // TODO: 게임 진행
-                break;
-            default:
-                Debug.Log("Receive : 미확인 메시지");
-                break;
-        }
-    }
-
-    /// <summary>
-    /// 화면 크기 정보 전송
-    /// </summary>
-    void SendScreenSize(int w, int h)
-    {
-        var msg = new JObject
-        {
-            ["type"] = "screen_size",
-            ["width"] = w,
-            ["height"] = h
-        };
-
-        byte[] data = Encoding.UTF8.GetBytes(msg.ToString(Formatting.None));
-        sendClient.Send(data, data.Length, IpEndPoint);
-        Debug.Log("Send : Screen Size");
-    }
-
-    /// <summary>
-    /// 캡처 완료 신호 전송
-    /// </summary>
-    public void SendCaptured(string corner, Vector2 irisPos)
-    {
-        var msg = new JObject
-        {
-            ["type"] = "captured",
-            ["corner"] = corner,
-            ["iris_pos"] = new JArray(irisPos.x, irisPos.y)
-        };
-        Send(msg);
-    }
-
-    /// <summary>
-    /// 일시정지 신호 전송
-    /// </summary>
-    public void SendPause()
-    {
-        var msg = new JObject { ["type"] = "pause" };
-        Send(msg);
-    }
-
-    /// <summary>
-    /// 재개 신호 전송
-    /// </summary>
-    public void SendResume()
-    {
-        var msg = new JObject { ["type"] = "resume" };
-        Send(msg);
-    }
-
-    /// <summary>
-    /// 종료 신호 전송
-    /// </summary>
-    public void SendKill()
-    {
-        var msg = new JObject { ["type"] = "kill" };
-        Send(msg);
-    }
-
-    /// <summary>
-    /// 내부 공통 전송 메서드
-    /// </summary>
-    private void Send(JObject msg)
-    {
-        string json = msg.ToString(Newtonsoft.Json.Formatting.None);
-        byte[] data = Encoding.UTF8.GetBytes(json);
-        sendClient.Send(data, data.Length, IpEndPoint);
-        Debug.Log($"[UdpSender] Sent: {json}");
-    }
-
-    /// <summary>
-    /// 소켓 닫기
-    /// </summary>
-    public void Close()
-    {   
-        sendClient.Close();
-    }
-
-    void OnDestroy()
-    {
-        // 종료 시 스레드와 소켓 정리
-        if (receiveThread != null && receiveThread.IsAlive)
-            receiveThread.Abort();
-
-        sendClient.Close();
+        StopSend();
+        StopReceive();
     }
 }
