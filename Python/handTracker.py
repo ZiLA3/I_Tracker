@@ -1,6 +1,7 @@
 import cv2 as cv
 from cvzone.HandTrackingModule import HandDetector
 
+
 class handTracker:
     """
     손 위치 추적 클래스
@@ -8,6 +9,7 @@ class handTracker:
     CVZone의 HandDetector를 활용하여 사용자의 손 위치를 감지하고 추적하는 클래스입니다.
     감지된 손의 랜드마크 위치를 Unity로 전송하기 위한 형식으로 변환합니다.
     """
+
     def __init__(self, camera=cv.VideoCapture(0), xyMax=(1920, 1080)):
         """
         손 트래커 초기화
@@ -16,7 +18,9 @@ class handTracker:
             camera (cv.VideoCapture): 비디오 입력 소스 (기본값: 기본 카메라)
             xyMax (tuple): 화면 해상도 (기본값: 1920x1080)
         """
-        self.handDetector = HandDetector(maxHands=1, detectionCon=0.8)  # CVZone 손 감지기 초기화 (최대 1개 손, 감지 신뢰도 0.8)
+        self.handDetector = HandDetector(
+            # CVZone 손 감지기 초기화 (최대 1개 손, 감지 신뢰도 0.8)
+            maxHands=1, detectionCon=0.8)
         self.camera = camera  # 카메라 객체
         self.yMax = xyMax[1]  # 화면 세로 해상도 (Y축 최대값)
 
@@ -39,10 +43,11 @@ class handTracker:
         success, image = self.camera.read()  # 카메라에서 프레임 읽기
         if not success:
             return None, None  # 카메라 읽기 실패 시 None 반환
-        
+
         # CVZone 손 감지기로 손 위치 감지
-        hands, image = self.handDetector.findHands(image, flipType=True)  # 이미지 좌우 반전하여 손 감지
-        
+        hands, image = self.handDetector.findHands(
+            image, flipType=True)  # 이미지 좌우 반전하여 손 감지
+
         hand_position = None  # 기본값을 None으로 설정
         if hands:  # 손이 감지된 경우
             lmList = hands[0]['lmList']  # 첫 번째 감지된 손의 랜드마크 리스트
@@ -50,5 +55,5 @@ class handTracker:
             for x, y, z in lmList:  # 각 랜드마크 좌표 처리
                 # x 좌표는 그대로, y 좌표는 반전 (화면 좌표계에 맞춤), z 좌표는 그대로
                 hand_position.extend([x, self.yMax - y, z])
-        
+
         return hand_position, image  # 변환된 손 위치 데이터와 처리된 이미지 반환

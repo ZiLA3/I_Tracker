@@ -12,20 +12,31 @@ public class EyeCheck : MonoBehaviour
     [SerializeField] float sphereCastRadius = 0.2f;
     [SerializeField] float maxDistance = 20f;
 
+    [Header("Cmaera Zoom in")]
+    [SerializeField] float zoomInFOV = 30f;
+    float defaultFOV;
+    bool isZoomedIn = false;
+
     LayerMask interactableLayer;
     Interactable currentInteractable;
     HashSet<Transform> interactedObjects;
+
+    Vector3 eyePoint;
+    Ray ray;
 
     private void Start()
     {
         interactedObjects = new HashSet<Transform>();
 
         currentInteractable = null;
+
         interactableLayer = LayerMask.GetMask("Interactable"); // "Interactable" 레이어를 가진 오브젝트만 상호작용 가능
+        defaultFOV = Camera.main.fieldOfView; // 기본 FOV 저장
     }
 
     private void Update()
     {
+        GenerateEyeRay(); // 선호출
         EyeVisualize(); // 눈 위치 시각화
         InteractCheck();
 
@@ -37,11 +48,28 @@ public class EyeCheck : MonoBehaviour
                 interactedObjects.Add(currentInteractable.transform.root);
             }
         }
+
+        // zoom in 효과
+        if (Input.GetKeyDown(KeyCode.Z)) 
+        {
+            isZoomedIn = !isZoomedIn; // 줌인 상태 토글
+
+            if (isZoomedIn)
+            {
+                Camera.main.fieldOfView = zoomInFOV; // 줌인
+                Camera.main.transform.localRotation = Quaternion.LookRotation(ray.direction);
+            }
+            else 
+            {
+                Camera.main.fieldOfView = defaultFOV; // 기본 FOV로 복원
+                Camera.main.transform.localRotation = Quaternion.Euler(0, 0, 0); // 카메라 각도 초기화
+            }
+        }
     }
 
     private void EyeVisualize() 
     {
-        Vector3 screenPos = FaceLandmark.EyePoint;
+        Vector3 screenPos = eyePoint;
         screenPos.z = -Camera.main.transform.position.z;
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
 
@@ -50,10 +78,6 @@ public class EyeCheck : MonoBehaviour
 
     private void InteractCheck() 
     {
-        Vector3 eyePoint = FaceLandmark.EyePoint;
-        // 1) 화면상의 마우스 위치로부터 Ray 생성
-        Ray ray = Camera.main.ScreenPointToRay(eyePoint);
-
         // 2) RaycastHit 변수 선언
         if (Physics.SphereCast(ray, sphereCastRadius, out RaycastHit hit, maxDistance, interactableLayer))
         {
@@ -67,5 +91,11 @@ public class EyeCheck : MonoBehaviour
             }
         }
         currentInteractable = null;
+    }
+
+    private void GenerateEyeRay()
+    {
+        eyePoint = FaceLandmark.EyePoint;
+        ray = Camera.main.ScreenPointToRay(eyePoint);
     }
 }
