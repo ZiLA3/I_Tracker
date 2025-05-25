@@ -4,11 +4,28 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] Transform eye;
-    [SerializeField] Vector3 cameraOffset;
+    [SerializeField] Camera mainCamera;
+    [SerializeField] Camera backCamera;
 
-    private void LateUpdate()
+    private void Update()
     {
-        transform.position = eye.position + cameraOffset;
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ToggleCamera();
+        }
+    }
+
+    private void ToggleCamera()
+    {
+        if (mainCamera.enabled)
+        {
+            mainCamera.enabled = false;
+            backCamera.enabled = true;
+        }
+        else
+        {
+            mainCamera.enabled = true;
+            backCamera.enabled = false;
+        }
     }
 }

@@ -57,12 +57,16 @@ public class EyeCheck : MonoBehaviour
             if (isZoomedIn)
             {
                 Camera.main.fieldOfView = zoomInFOV; // 줌인
-                Camera.main.transform.localRotation = Quaternion.LookRotation(ray.direction);
+                if (Physics.Raycast(ray, out RaycastHit hit))
+                {
+                    Vector3 targetPoint = hit.point;
+                    Camera.main.transform.LookAt(targetPoint);
+                }
             }
             else 
             {
                 Camera.main.fieldOfView = defaultFOV; // 기본 FOV로 복원
-                Camera.main.transform.localRotation = Quaternion.Euler(0, 0, 0); // 카메라 각도 초기화
+                Camera.main.transform.rotation = Quaternion.Euler(0, 0, 0); // 카메라 각도 초기화
             }
         }
     }
