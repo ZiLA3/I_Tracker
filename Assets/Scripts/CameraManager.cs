@@ -2,30 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CameraType
+{
+    MainCamera,
+    BackCamera,
+    EnemyCamera
+}
+
 public class CameraManager : MonoBehaviour
 {
     [SerializeField] Camera mainCamera;
     [SerializeField] Camera backCamera;
+    [SerializeField] Camera enemyCamera;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            ToggleCamera();
-        }
+        
     }
 
-    private void ToggleCamera()
+    public void ToggleCamera(CameraType cameraType)
     {
-        if (mainCamera.enabled)
+        switch (cameraType)
         {
-            mainCamera.enabled = false;
-            backCamera.enabled = true;
-        }
-        else
-        {
-            mainCamera.enabled = true;
-            backCamera.enabled = false;
+            case CameraType.MainCamera:
+                mainCamera.gameObject.SetActive(true);
+                backCamera.gameObject.SetActive(false);
+                enemyCamera.gameObject.SetActive(false);
+                break;
+            case CameraType.BackCamera:
+                mainCamera.gameObject.SetActive(false);
+                backCamera.gameObject.SetActive(true);
+                enemyCamera.gameObject.SetActive(false);
+                break;
+            case CameraType.EnemyCamera:
+                mainCamera.gameObject.SetActive(false);
+                backCamera.gameObject.SetActive(false);
+                enemyCamera.gameObject.SetActive(true);
+                break;
         }
     }
 }
