@@ -79,3 +79,9 @@ python-version
 # APFS dotfile
 .DS_Store
 /Assets/Materials/Demon Materials
+/Assets/Materials/Blood Materials
+/Assets/Materials/Keypad Materials
+/Assets/Materials/Picture Frame Materials
+/Assets/Models/Demon Models
+/Assets/Models/Key Models
+/Assets/Models/Picture Frame Models
