@@ -21,8 +21,8 @@ public class EyeCheck : MonoBehaviour
     bool isZoomedIn = false;
 
     // interactable 오브젝트를 찾기 위한 변수
-    IInteractable currentInteractable;
-    HashSet<IInteractable> interactedObjects;
+    MissionObject currentInteractable;
+    HashSet<MissionObject> interactedObjects;
 
     // LayerMask
     LayerMask interactableLayer;
@@ -30,7 +30,7 @@ public class EyeCheck : MonoBehaviour
 
     private void Start()
     {
-        interactedObjects = new HashSet<IInteractable>();
+        interactedObjects = new HashSet<MissionObject>();
 
         currentInteractable = null;
 
@@ -68,17 +68,22 @@ public class EyeCheck : MonoBehaviour
         // 2) RaycastHit 변수 선언
         if (Physics.SphereCast(ray, sphereCastRadius, out RaycastHit hit, maxDistance, interactableLayer))
         {
-            IInteractable interactalbe = hit.transform.root.GetComponent<IInteractable>();
+            MissionObject interactalbe = hit.transform.root.GetComponent<MissionObject>();
 
             if (interactalbe != null) 
             {
                 if (!interactedObjects.Contains(interactalbe)) 
                 {
                     currentInteractable = interactalbe;
+                    currentInteractable.SetInteractUIActive(true); // 상호작용 UI 활성화
                     return;
                 }
             }
         }
+
+        if(currentInteractable != null)
+            currentInteractable.SetInteractUIActive(false); // 상호작용 UI 비활성화
+        
         currentInteractable = null;
     }
 
@@ -96,6 +101,11 @@ public class EyeCheck : MonoBehaviour
 
             ememy.isInSight = false; // 적이 시야에서 벗어남
         }
+    }
+
+    public void UpdateInteredObjects() 
+    {
+        interactedObjects.Add(currentInteractable);
     }
 
     private void InputControl()

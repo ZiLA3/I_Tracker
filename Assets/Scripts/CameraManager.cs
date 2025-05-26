@@ -4,40 +4,53 @@ using UnityEngine;
 
 public enum CameraType
 {
-    MainCamera,
-    BackCamera,
-    EnemyCamera
+    mainCamera,
+    backCamera,
+    enemyCamera,
+    keypadCamera
 }
 
 public class CameraManager : MonoBehaviour
-{
+{ 
+    public static CameraManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     [SerializeField] Camera mainCamera;
     [SerializeField] Camera backCamera;
     [SerializeField] Camera enemyCamera;
-
-    private void Update()
-    {
-        
-    }
+    [SerializeField] Camera keypadCamera;
 
     public void ToggleCamera(CameraType cameraType)
     {
+        mainCamera.gameObject.SetActive(false);
+        backCamera.gameObject.SetActive(false);
+        enemyCamera.gameObject.SetActive(false);
+        keypadCamera.gameObject.SetActive(false);
+
         switch (cameraType)
         {
-            case CameraType.MainCamera:
+            case CameraType.mainCamera:
                 mainCamera.gameObject.SetActive(true);
-                backCamera.gameObject.SetActive(false);
-                enemyCamera.gameObject.SetActive(false);
                 break;
-            case CameraType.BackCamera:
-                mainCamera.gameObject.SetActive(false);
+            case CameraType.backCamera:
                 backCamera.gameObject.SetActive(true);
-                enemyCamera.gameObject.SetActive(false);
                 break;
-            case CameraType.EnemyCamera:
-                mainCamera.gameObject.SetActive(false);
-                backCamera.gameObject.SetActive(false);
+            case CameraType.enemyCamera:
                 enemyCamera.gameObject.SetActive(true);
+                break;
+            case CameraType.keypadCamera:
+                keypadCamera.gameObject.SetActive(true);
                 break;
         }
     }
