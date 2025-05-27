@@ -1,6 +1,11 @@
 import cv2
 import numpy as np
 
+"""
+
+"""
+
+
 class xyMapper:
     """
     홍채 좌표를 화면 좌표로 매핑하는 클래스
@@ -8,17 +13,19 @@ class xyMapper:
     캘리브레이션으로 수집된 4개의 참조점(좌상, 우상, 좌하, 우하)을 바탕으로
     홍채 위치를 화면 좌표로 변환하는 호모그래피 변환을 수행합니다.
     """
-    def __init__(self, xy_lt, xy_rt, xy_ld, xy_rd, xy_Screen):
+    def __init__(self, calibration_points, xy_Screen):
         """
         초기화 메서드: 아이트래킹 좌표를 화면 좌표로 매핑하기 위한 파라미터 설정
         
         Args:
-            xy_lt (tuple): 좌상단 모서리에서의 홍채 좌표 (x, y)
-            xy_rt (tuple): 우상단 모서리에서의 홍채 좌표 (x, y)
-            xy_ld (tuple): 좌하단 모서리에서의 홍채 좌표 (x, y)
-            xy_rd (tuple): 우하단 모서리에서의 홍채 좌표 (x, y)
+            calibration_points (dict): 4개의 화면 모서리 2차원 좌표 모음 (x,y)
             xy_Screen (tuple): 화면 크기 (width, height)
         """
+
+        xy_lt, xy_rt, xy_ld, xy_rd = (calibration_points['left_top'],
+                                      calibration_points['right_top'],
+                                      calibration_points['left_down'],
+                                      calibration_points['right_down'])
 
         # 모니터 화면 크기 저장
         self.xy_Screen = xy_Screen

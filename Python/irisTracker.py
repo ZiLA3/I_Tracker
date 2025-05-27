@@ -26,7 +26,9 @@ class irisTracker:
         )
         self.camera = camera  # 카메라 객체
         self.debug = debug  # 디버그 모드 설정
-    
+
+
+
     def get_iris_position(self):
         """
         현재 홍채 위치를 감지하고 반환
@@ -42,6 +44,9 @@ class irisTracker:
                 - iris_position (tuple): 홍채 중심 좌표 (x, y), 감지 실패 시 None
                 - image (numpy.ndarray): 처리된 이미지 (디버그 모드일 경우 시각화 요소 포함)
         """
+        iris_position = None  # 기본값 None으로 설정
+
+        #TODO: Same code in handTracker
         success, image = self.camera.read()  # 카메라에서 프레임 읽기
         image = cv.flip(image, 1)  # 이미지 좌우 반전 (거울 모드)
         if not success:
@@ -49,35 +54,37 @@ class irisTracker:
         
         # MediaPipe는 RGB 이미지 입력 필요
         image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)  # BGR → RGB 변환
+        #TODO: END
+
         results = self.face_mesh.process(image_rgb)  # Face Mesh 모델로 얼굴 랜드마크 분석
-        
-        iris_position = None  # 기본값 None으로 설정
-        
+
+        #TODO: Make Function for OOP
+
         # 얼굴 랜드마크가 감지된 경우
         if results.multi_face_landmarks:
             for face_landmarks in results.multi_face_landmarks:
                 h, w, _ = image.shape  # 이미지 크기
-                
+
                 # 왼쪽, 오른쪽 홍채 중심 landmark: 468, 473
                 # MediaPipe 랜드마크 인덱스: 468(왼쪽 홍채), 473(오른쪽 홍채)
                 left_iris = face_landmarks.landmark[468]  # 왼쪽 홍채 랜드마크
                 clx = int(left_iris.x * w)  # 왼쪽 홍채 x좌표 (픽셀)
                 cly = int(left_iris.y * h)  # 왼쪽 홍채 y좌표 (픽셀)
-                
+
                 right_iris = face_landmarks.landmark[473]  # 오른쪽 홍채 랜드마크
                 crx = int(right_iris.x * w)  # 오른쪽 홍채 x좌표 (픽셀)
                 cry = int(right_iris.y * h)  # 오른쪽 홍채 y좌표 (픽셀)
-                
+
                 # 양쪽 홍채 중심의 평균 위치 계산
                 cx = (clx + crx) // 2  # 중심 x좌표
                 cy = (cly + cry) // 2  # 중심 y좌표
-                
+
                 # 디버그 모드일 경우 시각화 요소 추가
                 if self.debug:
                     cv.circle(image, (clx, cly), 3, (0, 255, 0), -1)  # 왼쪽 홍채 위치 표시 (녹색)
                     cv.circle(image, (crx, cry), 3, (0, 255, 0), -1)  # 오른쪽 홍채 위치 표시 (녹색)
                     cv.circle(image, (cx, cy), 3, (0, 0, 255), -1)    # 평균 홍채 중심 표시 (빨간색)
-                
+
                 iris_position = (cx, cy)  # 최종 홍채 위치
         
         return iris_position, image  # 홍채 위치와 처리된 이미지 반환
