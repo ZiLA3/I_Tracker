@@ -88,13 +88,13 @@ public class EyeCheck : MonoBehaviour
     {
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, monsterLayer)) 
         {
-            Monster ememy = Monster.instance;
+            Monster ememy = Monster.Instance;
 
             ememy.isInSight = true; // 적이 시야에 들어옴
         }
         else
         {
-            Monster ememy = Monster.instance;
+            Monster ememy = Monster.Instance;
 
             ememy.isInSight = false; // 적이 시야에서 벗어남
         }

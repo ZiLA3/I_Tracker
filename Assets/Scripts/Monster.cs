@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-    public static Monster instance;
+    public static Monster Instance;
 
     [Header("Move Info")]
     [SerializeField] float moveSpeed;
@@ -15,16 +15,16 @@ public class Monster : MonoBehaviour
     Animator anim;
 
     // State Boolean variables
+    public bool gameOver;
     public bool isInSight = false;
     public bool lightOn = false;
     private bool inDeathZone = false;
-    public event Action gameOver;
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
         else
         {
@@ -72,10 +72,18 @@ public class Monster : MonoBehaviour
     {
         if (other.CompareTag("DeathZone"))
         {
-            inDeathZone = true;
-            anim.SetBool("Idle", false);
-            anim.SetBool("Move", false);
-            anim.SetBool("Attack", true);
+            GameOver();            
         }
+    }
+
+    private void GameOver()
+    {
+        inDeathZone = true;
+
+        anim.SetBool("Idle", false);
+        anim.SetBool("Move", false);
+        anim.SetBool("Attack", true);
+
+        MissionManager.Instance.currentInteractable?.ResetToMainView();
     }
 }

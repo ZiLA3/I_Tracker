@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class MissionObject : MonoBehaviour, IInteractable
 {
+    [Header("Mission Objects")]
     [SerializeField] protected GameObject interactUI;
-    [SerializeField] protected GameObject mission;
+    [SerializeField] protected GameObject[] mission;
     [SerializeField] protected GameObject inMissionUI;
     [SerializeField] protected GameObject clearKey;
 
@@ -15,6 +16,7 @@ public class MissionObject : MonoBehaviour, IInteractable
         {
             interactUI?.SetActive(false);
             inMissionUI?.SetActive(true);
+            ActiveMissionObjectActive(true);
         }
 
         MissionManager.Instance.SetMissionActive(true);
@@ -30,13 +32,24 @@ public class MissionObject : MonoBehaviour, IInteractable
         MissionManager.Instance.PushMissionKey(clearKey);
     }
 
-    public void ActiveMissionUIActive(bool active)
+    public void ActiveMissionObjectActive(bool active)
     {
-        mission?.SetActive(active);
+        foreach (GameObject obj in mission)
+        {
+            obj?.SetActive(active);
+        }
     }
 
     public virtual void ResetToMainView() 
     {
         CameraManager.Instance.ToggleCamera(CameraType.mainCamera);
+    }
+
+    public virtual void SucceedMission() 
+    {
+        ShowClearKey();
+        ResetToMainView();
+        ActiveMissionObjectActive(false);
+        MissionManager.Instance.AddInteractedObject(this);
     }
 }

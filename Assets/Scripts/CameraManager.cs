@@ -6,7 +6,7 @@ public enum CameraType
 {
     mainCamera,
     doorCamera,
-    enemyCamera,
+    rspCamera,
     keypadCamera
 }
 
@@ -30,7 +30,7 @@ public class CameraManager : MonoBehaviour
 
     [SerializeField] Camera mainCamera;
     [SerializeField] Camera doorCamera;
-    [SerializeField] Camera enemyCamera;
+    [SerializeField] Camera rspCamera;
     [SerializeField] Camera keypadCamera;
 
     public CameraType CurrentCameraType { get; private set; } = CameraType.mainCamera;
@@ -39,7 +39,7 @@ public class CameraManager : MonoBehaviour
     {
         mainCamera.gameObject.SetActive(false);
         doorCamera.gameObject.SetActive(false);
-        enemyCamera.gameObject.SetActive(false);
+        rspCamera.gameObject.SetActive(false);
         keypadCamera.gameObject.SetActive(false);
 
         mainCamUI.SetActive(false);
@@ -55,9 +55,9 @@ public class CameraManager : MonoBehaviour
                 CurrentCameraType = CameraType.doorCamera;
                 doorCamera.gameObject.SetActive(true);
                 break;
-            case CameraType.enemyCamera:
-                CurrentCameraType = CameraType.enemyCamera;
-                enemyCamera.gameObject.SetActive(true);
+            case CameraType.rspCamera:
+                CurrentCameraType = CameraType.rspCamera;
+                rspCamera.gameObject.SetActive(true);
                 break;
             case CameraType.keypadCamera:
                 CurrentCameraType = CameraType.keypadCamera;
