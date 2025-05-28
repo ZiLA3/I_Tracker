@@ -73,8 +73,30 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-# For Python Version Selection (required  < 3.12.10 by mediapipe)
-.python-version
+# For Python Version Selection (required  < 3.12.10)
+python-version
 
 # APFS dotfile
 .DS_Store
+/Assets/Materials/Demon Materials
+/Assets/Materials/Blood Materials
+/Assets/Materials/Keypad Materials
+/Assets/Materials/Picture Frame Materials
+/Assets/Models/Demon Models
+/Assets/Models/Key Models
+/Assets/Models/Picture Frame Models
+/Assets/Animations/Keypad Animations
+/Assets/Fonts
+/Assets/Textures/Picture Frame Textures
+/Assets/Textures/Keypad Textures
+/Assets/Textures/Key&Lock textures
+/Assets/Textures/Blood Textures
+/Assets/Textures/Demon Textures
+/Assets/Textures/Thirdparty Textures
+/Assets/TextMesh Pro
+/Assets/Scenes/Keypad Test Scenes
+/Assets/Sounds
+/Assets/Prefabs/ThirdParty Prefab
+/Assets/Models/Thirdparty Models
+/Assets/Scripts/Keypad Scripts
+/Assets/Materials/Thirdparty Materials
