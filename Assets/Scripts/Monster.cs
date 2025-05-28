@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -15,9 +16,9 @@ public class Monster : MonoBehaviour
 
     // State Boolean variables
     public bool isInSight = false;
-    public bool mission = false;
     public bool lightOn = false;
     private bool inDeathZone = false;
+    public event Action gameOver;
 
     private void Awake()
     {
@@ -52,7 +53,7 @@ public class Monster : MonoBehaviour
         if (inDeathZone)
             return;
 
-        if (mission || lightOn || !isInSight)
+        if (MissionManager.Instance.IsInMission || lightOn || !isInSight)
         {
             controller.Move(transform.forward * moveSpeed * Time.deltaTime);
 

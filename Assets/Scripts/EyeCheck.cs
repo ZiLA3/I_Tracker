@@ -20,20 +20,12 @@ public class EyeCheck : MonoBehaviour
     float defaultFOV;
     bool isZoomedIn = false;
 
-    // interactable 오브젝트를 찾기 위한 변수
-    MissionObject currentInteractable;
-    HashSet<MissionObject> interactedObjects;
-
     // LayerMask
     LayerMask interactableLayer;
     LayerMask monsterLayer;
 
     private void Start()
     {
-        interactedObjects = new HashSet<MissionObject>();
-
-        currentInteractable = null;
-
         defaultFOV = Camera.main.fieldOfView; // 기본 FOV 저장
 
         interactableLayer = LayerMask.GetMask("Interactable"); // "Interactable" 레이어를 가진 오브젝트만 상호작용 가능
@@ -65,26 +57,31 @@ public class EyeCheck : MonoBehaviour
 
     private void InteractCheck() 
     {
-        // 2) RaycastHit 변수 선언
+        MissionManager missionManager = MissionManager.Instance;
+
+        if (missionManager.IsInMission)
+            return;
+
+        // RaycastHit 변수 선언
         if (Physics.SphereCast(ray, sphereCastRadius, out RaycastHit hit, maxDistance, interactableLayer))
         {
-            MissionObject interactalbe = hit.transform.root.GetComponent<MissionObject>();
+            MissionObject interactalbe = hit.transform.GetComponentInParent<MissionObject>();
 
             if (interactalbe != null) 
             {
-                if (!interactedObjects.Contains(interactalbe)) 
+                if (!missionManager.IsInteracted(interactalbe)) 
                 {
-                    currentInteractable = interactalbe;
-                    currentInteractable.SetInteractUIActive(true); // 상호작용 UI 활성화
+                    missionManager.SetCurrentInteractable(interactalbe); // 현재 상호작용 가능한 오브젝트 설정
+                    missionManager.currentInteractable.SetInteractUIActive(true); // 상호작용 UI 활성화
                     return;
                 }
             }
         }
 
-        if(currentInteractable != null)
-            currentInteractable.SetInteractUIActive(false); // 상호작용 UI 비활성화
+        if(missionManager.currentInteractable != null) // 현재 상호작용 가능했던 오브젝트가 있다면
+            missionManager.currentInteractable.SetInteractUIActive(false); // 상호작용 UI 비활성화
         
-        currentInteractable = null;
+        missionManager.SetCurrentInteractable(null); // 현재 상호작용 가능한 오브젝트 초기화
     }
 
     private void EnemyOnSight() 
@@ -103,29 +100,27 @@ public class EyeCheck : MonoBehaviour
         }
     }
 
-    public void UpdateInteredObjects() 
-    {
-        interactedObjects.Add(currentInteractable);
-    }
-
     private void InputControl()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0))
         {
-            if (currentInteractable != null)
+            MissionManager missionManager = MissionManager.Instance;
+
+            if (missionManager.currentInteractable != null)
             {
-                currentInteractable.Interact();
-                interactedObjects.Add(currentInteractable);
+                missionManager.currentInteractable.Interact();
             }
         }
 
-        // zoom in 효과
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            isZoomedIn = !isZoomedIn; // 줌인 상태 토글
+        // zoom in 효과 -> 마우스 휠 스크롤로 줌인/줌아웃
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-            if (isZoomedIn)
+        if (CameraManager.Instance.CurrentCameraType == CameraType.mainCamera) 
+        {
+            if (scroll > 0 && !isZoomedIn)
             {
+                isZoomedIn = true;
+
                 Camera.main.fieldOfView = zoomInFOV; // 줌인
                 if (Physics.Raycast(ray, out RaycastHit hit))
                 {
@@ -133,10 +128,12 @@ public class EyeCheck : MonoBehaviour
                     Camera.main.transform.LookAt(targetPoint);
                 }
             }
-            else
+            else if (scroll < 0 && isZoomedIn)
             {
-                Camera.main.fieldOfView = defaultFOV; // 기본 FOV로 복원
-                Camera.main.transform.rotation = Quaternion.Euler(0, 0, 0); // 카메라 각도 초기화
+                isZoomedIn = false;
+
+                Camera.main.fieldOfView = defaultFOV; // 줌아웃
+                Camera.main.transform.rotation = Quaternion.Euler(0, 0, 0); // 카메라 회전 초기화
             }
         }
     }

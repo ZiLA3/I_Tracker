@@ -6,14 +6,18 @@ public class MissionObject : MonoBehaviour, IInteractable
 {
     [SerializeField] protected GameObject interactUI;
     [SerializeField] protected GameObject mission;
+    [SerializeField] protected GameObject inMissionUI;
     [SerializeField] protected GameObject clearKey;
 
     public virtual void Interact()
     {
         if (interactUI.activeSelf) 
         {
-            interactUI.SetActive(false);
+            interactUI?.SetActive(false);
+            inMissionUI?.SetActive(true);
         }
+
+        MissionManager.Instance.SetMissionActive(true);
     }
 
     public void SetInteractUIActive(bool active)
@@ -23,7 +27,7 @@ public class MissionObject : MonoBehaviour, IInteractable
 
     public void ShowClearKey()
     {
-        clearKey?.SetActive(true);
+        MissionManager.Instance.PushMissionKey(clearKey);
     }
 
     public void ActiveMissionUIActive(bool active)
@@ -31,7 +35,7 @@ public class MissionObject : MonoBehaviour, IInteractable
         mission?.SetActive(active);
     }
 
-    public void ResetCamera() 
+    public virtual void ResetToMainView() 
     {
         CameraManager.Instance.ToggleCamera(CameraType.mainCamera);
     }
