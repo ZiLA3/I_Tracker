@@ -1,6 +1,7 @@
 import socket
 import time
 
+
 class UDPManager:
     """
     유니티와 통신하는 UDP 관리 클래스

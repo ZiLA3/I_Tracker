@@ -2,8 +2,7 @@ import cv2 as cv
 import time
 import callbacks
 from UDPManager import UDPManager
-from handTracker import handTracker
-from irisTracker import irisTracker
+from Tracker import Tracker
 from xyMapper import xyMapper
 
 # 상수 선언

@@ -22,10 +22,7 @@ class xyMapper:
             xy_Screen (tuple): 화면 크기 (width, height)
         """
 
-        xy_lt, xy_rt, xy_ld, xy_rd = (calibration_points['left_top'],
-                                      calibration_points['right_top'],
-                                      calibration_points['left_down'],
-                                      calibration_points['right_down'])
+        xy_lt, xy_rt, xy_ld, xy_rd = (p for p in calibration_points.values())
 
         # 모니터 화면 크기 저장
         self.xy_Screen = xy_Screen

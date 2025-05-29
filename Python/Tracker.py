@@ -40,20 +40,20 @@ class Tracker:
               # 왼쪽 홍채 y좌표 (픽셀)
 
             right_iris = face_landmarks.landmark[RIGHT_EYE_MARK]  # 오른쪽 홍채
-            crx, cry = (int(right_iris.x * w), int(right_iris.y * h))  # 오른쪽 홍채 x, y좌표 (픽셀)
+            crx, cry = ((right_iris.x * w), (right_iris.y * h))  # 오른쪽 홍채 x, y좌표 (픽셀)
 
             # 양쪽 홍채 중심의 평균 위치 계산
             cx, cy = ((clx + crx) // 2, (cly + cry) // 2)  # 중심 x, y좌표
 
-        return cx, cy
+        return [cx, cy]
 
     def get_hand_pos(self, multi_hand_landmarks):
         h, w = self.height, self.width
         hand_position = []
         for hand_landmarks in multi_hand_landmarks[0].landmark:
-            x, y, z= (int(hand_landmarks.x * w), int(hand_landmarks.y * h), hand_landmarks.z) # z는 정규화된 상대 깊이 값
+            x, y, z= (int(hand_landmarks.x * w), int(hand_landmarks.y * h), int(hand_landmarks.z * 100)) # z는 정규화된 상대 깊이 값
 
-            hand_position.extend([x, h - y, z])
+            hand_position.append([x, h - y, z])
 
         return hand_position
 
@@ -64,7 +64,7 @@ class Tracker:
         if self.height == 0 or self.width == 0:
             self.set_image_size(image_bgr)
 
-        iris_pos, hand_pos = [-1, -1], [-1, -1]
+        iris_pos, hand_pos = [-1, -1], [[-1, -1, -1]]
 
         image_rgb = cv.cvtColor(image_bgr, cv.COLOR_BGR2RGB)  # BGR → RGB 변환
 
