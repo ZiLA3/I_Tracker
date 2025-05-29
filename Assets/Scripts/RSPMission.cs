@@ -11,25 +11,26 @@ public class RSPMission : MissionObject
 {
     [Header("RSP Mission Objects")]
     [SerializeField] GameObject timeText;
-
+    [SerializeField] GameObject hand;
+ 
     [Header("Hand Materials")]
+    [SerializeField] MeshRenderer handPictureRenderer;
+    [Space]
     private Material defaultMat;
     [SerializeField] private Material rockMat;
     [SerializeField] private Material sissorMat;
     [SerializeField] private Material paperMat;
 
     [Header("RSP Mission Settings")]
+    private RSPType missionRSPType;
     [SerializeField] float timeToGenerateRSP = 2f;
-    public float rspTimer = 0f;
+    [SerializeField] float rspTimer = 0f;
     
-    [Space]
-    [SerializeField] MeshRenderer handRenderer;
-    [SerializeField] HandCheck handCheck;
-    public RSPType missionRSPType;
 
     private void Start()
     {
-        defaultMat = handRenderer.sharedMaterial;
+        handPictureRenderer = hand.GetComponentInParent<MeshRenderer>();
+        defaultMat = handPictureRenderer.sharedMaterial;
         rspTimer = timeToGenerateRSP;
     }
 
@@ -39,10 +40,10 @@ public class RSPMission : MissionObject
         {
             ResetToMainView();
             ActiveMissionObjectActive(false);
-            MissionManager.Instance.SetMissionActive(false);
+            Player.Instance.Mission.SetMissionActive(false);
         }
 
-        if(MissionManager.Instance.currentInteractable == this && MissionManager.Instance.IsInMission)
+        if(Player.Instance.Mission.currentInteractable == this && Player.Instance.Mission.IsInMission)
             rspTimer -= Time.deltaTime;
 
         if (timeText.activeSelf) 
@@ -64,13 +65,13 @@ public class RSPMission : MissionObject
             switch (missionRSPType)
             {
                 case RSPType.Rock:
-                    handRenderer.sharedMaterial = rockMat;
+                    handPictureRenderer.sharedMaterial = rockMat;
                     break;
                 case RSPType.Sissor:
-                    handRenderer.sharedMaterial = sissorMat;
+                    handPictureRenderer.sharedMaterial = sissorMat;
                     break;
                 case RSPType.Paper:
-                    handRenderer.sharedMaterial = paperMat;
+                    handPictureRenderer.sharedMaterial = paperMat;
                     break;
             }
 
@@ -80,9 +81,9 @@ public class RSPMission : MissionObject
 
     private void CheckRSP()
     {
-        handCheck.rspCapture = true; // RSP 캡처 시작
+        Player.Instance.Hand.SetRSPCaptureActive(true); // RSP 캡처 시작
 
-        RSPType type = handCheck.currentRSPType;
+        RSPType type = Player.Instance.Hand.CurrentRSPType;
 
         if (type == RSPType.Rock && missionRSPType == RSPType.Sissor)
             Invoke("SucceedMission", 1f);
@@ -93,7 +94,7 @@ public class RSPMission : MissionObject
         else
             Invoke("ResetToMainView", 1f); // 실패 시 메인 뷰로 돌아가기
 
-        handCheck.rspCapture = false; // RSP 캡처 종료
+        Player.Instance.Hand.SetRSPCaptureActive(false); // RSP 캡처 종료
         timeText?.SetActive(false);
     }
 
@@ -103,6 +104,8 @@ public class RSPMission : MissionObject
 
         timeText?.SetActive(true);
 
+        Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
+
         rspTimer = timeToGenerateRSP; // RSP 타이머 초기화
 
         CameraManager.Instance.ToggleCamera(CameraType.rspCamera);
@@ -110,13 +113,15 @@ public class RSPMission : MissionObject
 
     public override void ResetToMainView()
     {
-        MissionManager.Instance.SetMissionActive(false);
+        Player.Instance.Mission.SetMissionActive(false);
+
+        Player.Instance.Hand.SetAnimator(null);
 
         inMissionUI?.SetActive(false);
         ActiveMissionObjectActive(false);
         timeText?.SetActive(false);
 
-        handRenderer.sharedMaterial = defaultMat; // 손 재질 초기화
+        handPictureRenderer.sharedMaterial = defaultMat; // 손 재질 초기화
 
         base.ResetToMainView();
     }
@@ -124,5 +129,12 @@ public class RSPMission : MissionObject
     public override void SucceedMission()
     {
         base.SucceedMission();
+    }
+
+    public override void ActiveMissionObjectActive(bool active)
+    {
+        base.ActiveMissionObjectActive(active);
+
+        hand?.SetActive(active);
     }
 }

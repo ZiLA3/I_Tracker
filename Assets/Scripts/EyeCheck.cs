@@ -24,6 +24,8 @@ public class EyeCheck : MonoBehaviour
     LayerMask interactableLayer;
     LayerMask monsterLayer;
 
+    public bool EnemyOnSight { get; private set; } // 적이 시야에 들어왔는지 여부
+
     private void Start()
     {
         defaultFOV = Camera.main.fieldOfView; // 기본 FOV 저장
@@ -36,7 +38,7 @@ public class EyeCheck : MonoBehaviour
     {
         GenerateEyeRay(); // 선호출
         EyeVisualize(); // 눈 위치 시각화
-        EnemyOnSight(); // 적이 시야에 들어왔는지 확인
+        CheckEnemyOnSight(); // 적이 시야에 들어왔는지 확인
         InteractCheck();
         InputControl();
     }
@@ -57,7 +59,7 @@ public class EyeCheck : MonoBehaviour
 
     private void InteractCheck() 
     {
-        MissionManager missionManager = MissionManager.Instance;
+        MissionManager missionManager = Player.Instance.Mission;
 
         if (missionManager.IsInMission)
             return;
@@ -84,19 +86,19 @@ public class EyeCheck : MonoBehaviour
         missionManager.SetCurrentInteractable(null); // 현재 상호작용 가능한 오브젝트 초기화
     }
 
-    private void EnemyOnSight() 
+    private void CheckEnemyOnSight() 
     {
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, monsterLayer)) 
         {
             Monster ememy = Monster.Instance;
 
-            ememy.isInSight = true; // 적이 시야에 들어옴
+            EnemyOnSight = true; // 적이 시야에 들어옴
         }
         else
         {
             Monster ememy = Monster.Instance;
 
-            ememy.isInSight = false; // 적이 시야에서 벗어남
+            EnemyOnSight = false; // 적이 시야에서 벗어남
         }
     }
 
@@ -104,7 +106,7 @@ public class EyeCheck : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            MissionManager missionManager = MissionManager.Instance;
+            MissionManager missionManager = Player.Instance.Mission;
 
             if (missionManager.currentInteractable != null)
             {

@@ -5,10 +5,6 @@ using UnityEngine;
 
 public class MissionManager : MonoBehaviour
 {
-    // Singleton instance for easy access
-    public static MissionManager Instance;
-
-
     // interactable 오브젝트를 찾기 위한 변수
     public MissionObject currentInteractable { get; private set; }
     public HashSet<MissionObject> interactedObjects { get; private set; }
@@ -17,20 +13,7 @@ public class MissionManager : MonoBehaviour
     public Queue<GameObject> GameObjects { get; private set; }
 
     public bool IsInMission { get; private set; } = false; // 현재 미션 중인지 여부
-    public int playeKeyCount { get; private set; } = 0;
-
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+    public int PlayerKeyCount { get; private set; } = 0;
 
     void Start()
     {
@@ -47,6 +30,9 @@ public class MissionManager : MonoBehaviour
 
     public void SetCurrentInteractable(MissionObject interactable)
     {
+        if(currentInteractable != null)
+            currentInteractable.SetInteractUIActive(false);
+
         currentInteractable = interactable;
     }
 
@@ -72,7 +58,7 @@ public class MissionManager : MonoBehaviour
     {
         if (GameObjects.Count > 0)
         {
-            playeKeyCount++;
+            PlayerKeyCount++;
             GameObject key = GameObjects.Dequeue();
             key.SetActive(false);
         }

@@ -6,7 +6,6 @@ public class MissionObject : MonoBehaviour, IInteractable
 {
     [Header("Mission Objects")]
     [SerializeField] protected GameObject interactUI;
-    [SerializeField] protected GameObject[] mission;
     [SerializeField] protected GameObject inMissionUI;
     [SerializeField] protected GameObject clearKey;
 
@@ -19,7 +18,7 @@ public class MissionObject : MonoBehaviour, IInteractable
             ActiveMissionObjectActive(true);
         }
 
-        MissionManager.Instance.SetMissionActive(true);
+        Player.Instance.Mission.SetMissionActive(true);
     }
 
     public void SetInteractUIActive(bool active)
@@ -29,15 +28,12 @@ public class MissionObject : MonoBehaviour, IInteractable
 
     public void ShowClearKey()
     {
-        MissionManager.Instance.PushMissionKey(clearKey);
+        Player.Instance.Mission.PushMissionKey(clearKey);
     }
 
-    public void ActiveMissionObjectActive(bool active)
+    public virtual void ActiveMissionObjectActive(bool active)
     {
-        foreach (GameObject obj in mission)
-        {
-            obj?.SetActive(active);
-        }
+        
     }
 
     public virtual void ResetToMainView() 
@@ -50,6 +46,6 @@ public class MissionObject : MonoBehaviour, IInteractable
         ShowClearKey();
         ResetToMainView();
         ActiveMissionObjectActive(false);
-        MissionManager.Instance.AddInteractedObject(this);
+        Player.Instance.Mission.AddInteractedObject(this);
     }
 }

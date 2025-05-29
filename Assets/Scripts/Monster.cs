@@ -16,7 +16,6 @@ public class Monster : MonoBehaviour
 
     // State Boolean variables
     public bool gameOver;
-    public bool isInSight = false;
     public bool lightOn = false;
     private bool inDeathZone = false;
 
@@ -53,7 +52,7 @@ public class Monster : MonoBehaviour
         if (inDeathZone)
             return;
 
-        if (MissionManager.Instance.IsInMission || lightOn || !isInSight)
+        if (Player.Instance.Mission.IsInMission || lightOn || !Player.Instance.Eye.EnemyOnSight)
         {
             controller.Move(transform.forward * moveSpeed * Time.deltaTime);
 
@@ -84,6 +83,6 @@ public class Monster : MonoBehaviour
         anim.SetBool("Move", false);
         anim.SetBool("Attack", true);
 
-        MissionManager.Instance.currentInteractable?.ResetToMainView();
+        Player.Instance.Mission.currentInteractable?.ResetToMainView();
     }
 }
