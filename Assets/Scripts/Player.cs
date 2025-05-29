@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
 
             Hand = GetComponent<HandCheck>();
             Eye = GetComponent<EyeCheck>();
+            Mission = GetComponent<MissionManager>();
         }
         else
         {

@@ -7,6 +7,7 @@ public enum CameraType
     mainCamera,
     doorCamera,
     rspCamera,
+    leverCamera,
     keypadCamera
 }
 
@@ -15,6 +16,7 @@ public class CameraManager : MonoBehaviour
     public static CameraManager Instance { get; private set; }
 
     [SerializeField] GameObject mainCamUI;
+    [SerializeField] GameObject handForKey;
 
     private void Awake()
     {
@@ -31,6 +33,7 @@ public class CameraManager : MonoBehaviour
     [SerializeField] Camera mainCamera;
     [SerializeField] Camera doorCamera;
     [SerializeField] Camera rspCamera;
+    [SerializeField] Camera leverCamera;
     [SerializeField] Camera keypadCamera;
 
     public CameraType CurrentCameraType { get; private set; } = CameraType.mainCamera;
@@ -41,6 +44,7 @@ public class CameraManager : MonoBehaviour
         doorCamera.gameObject.SetActive(false);
         rspCamera.gameObject.SetActive(false);
         keypadCamera.gameObject.SetActive(false);
+        leverCamera.gameObject.SetActive(false);
 
         mainCamUI.SetActive(false);
 
@@ -62,6 +66,10 @@ public class CameraManager : MonoBehaviour
             case CameraType.keypadCamera:
                 CurrentCameraType = CameraType.keypadCamera;
                 keypadCamera.gameObject.SetActive(true);
+                break;
+            case CameraType.leverCamera:
+                CurrentCameraType = CameraType.leverCamera;
+                leverCamera.gameObject.SetActive(true);
                 break;
         }
     }

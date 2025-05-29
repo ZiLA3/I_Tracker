@@ -9,46 +9,70 @@ public enum RSPType
     Paper = 2,
 }
 
-public enum HandMissionType 
+public enum HandActionType 
 {
+    None,
     RSP = 0,
-    OpenClose = 1,
+    PullDown = 1,
+    Catch = 2,
 }
 
 public class HandCheck : MonoBehaviour
 {
+    [SerializeField] GameObject mainHand;
+    [SerializeField] Animator mainHandAnim;
+
     Animator anim;
 
-    public HandMissionType HandMissionType { get; private set; }
+    public HandActionType HandType { get; private set; }
 
-    public RSPType CurrentRSPType;// { get; private set; }
-    public RSPType InputRSPType;// { get; private set; }
+    public RSPType CurrentRSPType; // { get; private set; }
+    public RSPType InputRSPType; // { get; private set; }
+    
+    public bool leverPullDown; // { get; private set; }
+    public bool keyCatch; // {get; private set;} 키 잡기 여부
 
-    private bool handTrackingOn;
+    public bool handTrackingOn; // private
     private bool rspCapture;
+    bool triggered = false; // 손 잡기 동작이 트리거되었는지 여부
+
+    float timer;
+    float handCatchTime = 0.3f; // 미션 통과를 위한 시간
 
     private void Start()
     {
+        handTrackingOn = true;
+
+        HandType = HandActionType.Catch;
         CurrentRSPType = RSPType.Paper; // 초기값 설정
         InputRSPType = RSPType.Paper; // 초기값 설정
+
+        SetMainHandActive(true); // mainHand 활성화 및 Animator 설정
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-            MissionManager missionManager = MissionManager.Instance;
-
-            missionManager.PopMissionKey();
-        }
-
         if (!handTrackingOn)
             return;
 
-        if (HandMissionType == HandMissionType.RSP)
+        if (HandType == HandActionType.RSP)
             GenerateRSP();
-        else if (HandMissionType == HandMissionType.OpenClose) ;
-            // GenerateRSP(); // OpenClose 미션에서도 RSP 생성 로직을 사용하도록 변경
+        else if (HandType == HandActionType.PullDown)
+            HandPullDown();
+        else if (HandType == HandActionType.Catch)
+            HandCatch(); // 손 잡기 동작 처리
+
+        // 손 잡기 동작을 위한 타이머
+        if (leverPullDown)
+        {
+            timer -= Time.deltaTime;
+
+            if (timer <= 0)
+            {
+                leverPullDown = false; // 손 잡기 동작 완료 후 false로 설정
+                triggered = false; // 손 잡기 동작이 완료되었으므로 트리거 상태 초기화
+            }
+        }
     }
 
     private void GenerateRSP() 
@@ -79,7 +103,34 @@ public class HandCheck : MonoBehaviour
         }              
     }
 
-    public void SetHandMissionType(HandMissionType type) => HandMissionType = type;
+    public void HandPullDown()
+    {
+        if (leverPullDown && !triggered) 
+        {
+            anim.SetTrigger("Pull");
+            triggered = true; // 손 잡기 동작이 트리거되었음을 표시
+        }
+    }
+
+    public void HandCatch() 
+    {
+        if (leverPullDown && !triggered)
+        { 
+            anim.SetTrigger("Catch");
+            triggered = true; // 손 잡기 동작이 트리거되었음을 표시
+        }
+    }
+
+    [ContextMenu("LeverPullDownActive")]
+    public void SetLeverPulldown()
+    {
+        leverPullDown = true; // 손 잡기 동작 활성화
+
+        // 손 잡기 동작을 위한 타이머 초기화
+        timer = handCatchTime;
+    }
+
+    public void SetHandMissionType(HandActionType type) => HandType = type;
 
     public void SetRSPCaptureActive(bool active) => rspCapture = active;
 
@@ -88,4 +139,12 @@ public class HandCheck : MonoBehaviour
     public void SetHandTrackingActive(bool active) => handTrackingOn = active;
 
     public void SetAnimator(Animator handAnim) => anim = handAnim;
+
+    public void SetMainHandActive(bool active)
+    {
+        mainHand.SetActive(active);
+
+        if(active)
+            anim = mainHandAnim; // Animator를 mainHandAnim으로 설정
+    }
 }

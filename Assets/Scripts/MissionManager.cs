@@ -9,8 +9,6 @@ public class MissionManager : MonoBehaviour
     public MissionObject currentInteractable { get; private set; }
     public HashSet<MissionObject> interactedObjects { get; private set; }
 
-    // Mission Key 저장 Queue
-    public Queue<GameObject> GameObjects { get; private set; }
 
     public bool IsInMission { get; private set; } = false; // 현재 미션 중인지 여부
     public int PlayerKeyCount { get; private set; } = 0;
@@ -18,7 +16,6 @@ public class MissionManager : MonoBehaviour
     void Start()
     {
         interactedObjects = new HashSet<MissionObject>();
-        GameObjects = new Queue<GameObject>();
 
         currentInteractable = null;
     }
@@ -46,22 +43,6 @@ public class MissionManager : MonoBehaviour
     public bool IsInteracted(MissionObject interactable)
     {
         return interactedObjects.Contains(interactable);
-    }
-
-    public void PushMissionKey(GameObject GameObject) 
-    {
-        GameObject.SetActive(true);
-        GameObjects.Enqueue(GameObject);
-    }
-
-    public void PopMissionKey()
-    {
-        if (GameObjects.Count > 0)
-        {
-            PlayerKeyCount++;
-            GameObject key = GameObjects.Dequeue();
-            key.SetActive(false);
-        }
     }
 
     public void SetMissionActive(bool active)

@@ -5,18 +5,15 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 
-
-
-public class RSPMission : MissionObject
+public class MissionRSP : MissionObject
 {
     [Header("RSP Mission Objects")]
     [SerializeField] GameObject timeText;
-    [SerializeField] GameObject hand;
  
     [Header("Hand Materials")]
     [SerializeField] MeshRenderer handPictureRenderer;
     [Space]
-    private Material defaultMat;
+    [SerializeField] private Material defaultMat;
     [SerializeField] private Material rockMat;
     [SerializeField] private Material sissorMat;
     [SerializeField] private Material paperMat;
@@ -29,19 +26,13 @@ public class RSPMission : MissionObject
 
     private void Start()
     {
-        handPictureRenderer = hand.GetComponentInParent<MeshRenderer>();
-        defaultMat = handPictureRenderer.sharedMaterial;
         rspTimer = timeToGenerateRSP;
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(1))
-        {
             ResetToMainView();
-            ActiveMissionObjectActive(false);
-            Player.Instance.Mission.SetMissionActive(false);
-        }
 
         if(Player.Instance.Mission.currentInteractable == this && Player.Instance.Mission.IsInMission)
             rspTimer -= Time.deltaTime;
@@ -102,10 +93,13 @@ public class RSPMission : MissionObject
     {
         base.Interact();
 
-        timeText?.SetActive(true);
+        SetHandActive(true); // 손 활성화
 
+        Player.Instance.Hand.SetHandTrackingActive(true); // 손 추적 활성화
+        Player.Instance.Hand.SetHandMissionType(HandActionType.RSP); // RSP 미션 타입 설정
         Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
 
+        timeText?.SetActive(true);
         rspTimer = timeToGenerateRSP; // RSP 타이머 초기화
 
         CameraManager.Instance.ToggleCamera(CameraType.rspCamera);
@@ -115,11 +109,12 @@ public class RSPMission : MissionObject
     {
         Player.Instance.Mission.SetMissionActive(false);
 
-        Player.Instance.Hand.SetAnimator(null);
+        Player.Instance.Hand.SetMainHandActive(true); // 손 모델 비활성화
+        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // 손 미션 타입 초기화
 
         inMissionUI?.SetActive(false);
-        ActiveMissionObjectActive(false);
         timeText?.SetActive(false);
+        SetHandActive(false);
 
         handPictureRenderer.sharedMaterial = defaultMat; // 손 재질 초기화
 
@@ -129,12 +124,5 @@ public class RSPMission : MissionObject
     public override void SucceedMission()
     {
         base.SucceedMission();
-    }
-
-    public override void ActiveMissionObjectActive(bool active)
-    {
-        base.ActiveMissionObjectActive(active);
-
-        hand?.SetActive(active);
     }
 }
