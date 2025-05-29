@@ -44,6 +44,7 @@ public class MissionObject : MonoBehaviour, IInteractable
     public virtual void ResetToMainView() 
     {
         CameraManager.Instance.ToggleCamera(CameraType.mainCamera);
+        print(Time.time);
     }
 
     public virtual void SucceedMission() 

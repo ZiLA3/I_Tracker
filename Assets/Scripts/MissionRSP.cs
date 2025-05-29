@@ -22,7 +22,8 @@ public class MissionRSP : MissionObject
     private RSPType missionRSPType;
     [SerializeField] float timeToGenerateRSP = 2f;
     [SerializeField] float rspTimer = 0f;
-    
+
+    bool stopped;
 
     private void Start()
     {
@@ -31,14 +32,16 @@ public class MissionRSP : MissionObject
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            // Player.Instance.Hand.SetDefaultRSPState();
-            Invoke("ResetToMainView", 1f); // 실패 시 메인 뷰로 돌아가기
-        }
+        if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
+            return;
 
-        if(Player.Instance.Mission.currentInteractable == this && Player.Instance.Mission.IsInMission)
-            rspTimer -= Time.deltaTime;
+        if(stopped)
+            return; // 미션이 중지된 경우 업데이트 중지
+
+        if (Input.GetMouseButtonDown(1))
+            FailSetting();
+
+        rspTimer -= Time.deltaTime;
 
         if (timeText.activeSelf) 
             timeText.GetComponent<TextMeshProUGUI>().text = rspTimer.ToString("F1");
@@ -80,24 +83,38 @@ public class MissionRSP : MissionObject
         RSPType type = Player.Instance.Hand.CurrentRSPType;
 
         if (type == RSPType.Rock && missionRSPType == RSPType.Sissor)
-            Invoke("SucceedMission", 1f);
+            SucceedSetting();
         else if (type == RSPType.Sissor && missionRSPType == RSPType.Paper)
-            Invoke("SucceedMission", 1f);
+            SucceedSetting();
         else if (type == RSPType.Paper && missionRSPType == RSPType.Rock)
-            Invoke("SucceedMission", 1f);
+            SucceedSetting();
         else
         {
-            Player.Instance.Hand.SetDefaultRSPState();
-            Invoke("ResetToMainView", 1f); // 실패 시 메인 뷰로 돌아가기
+            FailSetting();
+            timeText.GetComponent<TextMeshProUGUI>().text = "Failed!";
         }
 
         Player.Instance.Hand.SetRSPCaptureActive(false); // RSP 캡처 종료
-        timeText?.SetActive(false);
+    }
+
+    private void SucceedSetting()
+    {
+        stopped = true; // RSP 성공 시 미션 중지
+        timeText.GetComponent<TextMeshProUGUI>().text = "Succeded!";
+        Invoke("SucceedMission", 1f);
+    }
+    private void FailSetting()
+    {
+        stopped = true; // 마우스 오른쪽 버튼 클릭 시 미션 중지
+        Player.Instance.Hand.SetDefaultRSPState(); // RSP 상태 초기화
+        Invoke(nameof(ResetToMainView), 1f); // 실패 시 메인 뷰로 돌아가기
     }
 
     public override void Interact()
     {
         base.Interact();
+
+        stopped = false; // 미션 중지 상태 초기화
 
         SetHandActive(true); // 손 활성화
 
@@ -119,13 +136,13 @@ public class MissionRSP : MissionObject
         Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
         Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
 
-        inMissionUI?.SetActive(false);
-        timeText?.SetActive(false);
+        inMissionUI.SetActive(false);
+        timeText.SetActive(false);
         SetHandActive(false);
 
         handPictureRenderer.sharedMaterial = defaultMat; // 손 재질 초기화
 
-        base.ResetToMainView();
+        CameraManager.Instance.ToggleCamera(CameraType.mainCamera); // 메인 카메라로 전환
     }
 
     public override void SucceedMission()

@@ -13,6 +13,9 @@ public class MissionLever : MissionObject
 
     private void Update()
     {
+        if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
+            return;
+
         if (Input.GetMouseButtonDown(1))
             ResetToMainView();
 

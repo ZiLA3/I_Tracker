@@ -163,7 +163,6 @@ public class HandCheck : MonoBehaviour
     public void SetAnimator(Animator handAnim) 
     {
         anim = handAnim;
-        print("SetAnimator called with: " + anim);  
     }
 
 }
