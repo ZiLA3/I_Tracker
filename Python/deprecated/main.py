@@ -1,8 +1,7 @@
 import cv2 as cv
 import time
-import callbacks
+from deprecated import callbacks
 from UDPManager import UDPManager
-from Tracker import Tracker
 from xyMapper import xyMapper
 
 # 상수 선언

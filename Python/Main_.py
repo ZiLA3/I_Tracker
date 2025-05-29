@@ -1,48 +1,7 @@
 import cv2 as cv
-import numpy as np
-import callbacks
+import Network
 from Tracker import Tracker
 from xyMapper import xyMapper
-from UDPManager_ import UDPManager
-
-class UDPState:
-    def __init__(self):
-        self.current = 0
-
-        self.calibration_points = {
-            "LeftTop": [-1, -1],
-            "RightTop": [-1, -1],
-            "LeftBottom": [-1, -1],
-            "RightBottom": [-1, -1]
-        }
-        self.message_to_points = {
-            "1": "LeftTop",
-            "2": "RightTop",
-            "3": "LeftBottom",
-            "4": "RightBottom"
-        }
-
-        self.temp_array = np.empty((2, 0))
-        self.screen_size = [-1, -1]
-        self.pre_message = "0"
-
-    def is_get_screen(self):
-        return self.screen_size == (-1, -1)
-
-    def is_all_captured(self):
-        return self.calibration_points["RightBottom"][0] != -1
-
-    def capture(self, iris):
-        iris = np.array(iris).reshape((2, 1))
-        self.temp_array = np.hstack([self.temp_array, iris])
-
-    def end_capture(self, msg):
-        x, y = self.temp_array[0].mean(), self.temp_array[1].mean()
-        self.temp_array = np.empty((2, 0))
-
-        self.calibration_points[self.message_to_points[msg]][0] = x
-        self.calibration_points[self.message_to_points[msg]][1] = y
-
 
 VIDEO_INDEX = 0
 
@@ -58,9 +17,9 @@ class App:
 
         self.tracker = Tracker()
         self.xyMapper = None
-        self.udp = UDPManager(IP, SEND_PORT, RECEIVE_PORT)
+        self.udp = Network.UDPManager(IP, SEND_PORT, RECEIVE_PORT)
+        self.state = Network.UDPState()
 
-        self.state = UDPState()
         self.debug_capture_int = 0
 
     def read_video(self):
@@ -97,12 +56,8 @@ class App:
             self.state.current = 2
 
     def run_process(self, iris, hands):
-        #TODO:
         iris_mapping = self.xyMapper.map_coordinates(iris)
-        iris_str = f"{iris_mapping[0]},{iris_mapping[1]}"
-        hands_str = "/".join(f"{h[0]},{h[1]},{h[2]}" for h in hands)
-        send_str = iris_str + "##" + hands_str
-        print(send_str)
+        send_str = Network.get_send_str(iris_mapping, hands)
         self.udp.send(send_str)
 
     def process(self):
@@ -130,6 +85,7 @@ class App:
         return True
 
     def close(self):
+        self.udp.close()
         cv.destroyAllWindows()
 
 
