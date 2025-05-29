@@ -1,7 +1,6 @@
 import mediapipe as mp
 import cv2 as cv
 
-
 class irisTracker:
     """
     홍채 위치 추적 클래스
@@ -9,7 +8,6 @@ class irisTracker:
     MediaPipe Face Mesh를 사용하여 사용자의 얼굴 랜드마크를 감지하고
     특히 홍채의 중심 위치를 추적하는 클래스입니다.
     """
-
     def __init__(self, camera=cv.VideoCapture(0), debug=False):
         """
         홍채 트래커 초기화
@@ -29,6 +27,8 @@ class irisTracker:
         self.camera = camera  # 카메라 객체
         self.debug = debug  # 디버그 모드 설정
 
+
+
     def get_iris_position(self):
         """
         현재 홍채 위치를 감지하고 반환
@@ -44,16 +44,21 @@ class irisTracker:
                 - iris_position (tuple): 홍채 중심 좌표 (x, y), 감지 실패 시 None
                 - image (numpy.ndarray): 처리된 이미지 (디버그 모드일 경우 시각화 요소 포함)
         """
+        iris_position = None  # 기본값 None으로 설정
+
+        #TODO: Same code in handTracker
         success, image = self.camera.read()  # 카메라에서 프레임 읽기
         image = cv.flip(image, 1)  # 이미지 좌우 반전 (거울 모드)
         if not success:
             return None, None  # 카메라 읽기 실패 시 None 반환
-
+        
         # MediaPipe는 RGB 이미지 입력 필요
         image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)  # BGR → RGB 변환
+        #TODO: END
+
         results = self.face_mesh.process(image_rgb)  # Face Mesh 모델로 얼굴 랜드마크 분석
 
-        iris_position = None  # 기본값 None으로 설정
+        #TODO: Make Function for OOP
 
         # 얼굴 랜드마크가 감지된 경우
         if results.multi_face_landmarks:
@@ -76,13 +81,10 @@ class irisTracker:
 
                 # 디버그 모드일 경우 시각화 요소 추가
                 if self.debug:
-                    # 왼쪽 홍채 위치 표시 (녹색)
-                    cv.circle(image, (clx, cly), 3, (0, 255, 0), -1)
-                    # 오른쪽 홍채 위치 표시 (녹색)
-                    cv.circle(image, (crx, cry), 3, (0, 255, 0), -1)
-                    # 평균 홍채 중심 표시 (빨간색)
-                    cv.circle(image, (cx, cy), 3, (0, 0, 255), -1)
+                    cv.circle(image, (clx, cly), 3, (0, 255, 0), -1)  # 왼쪽 홍채 위치 표시 (녹색)
+                    cv.circle(image, (crx, cry), 3, (0, 255, 0), -1)  # 오른쪽 홍채 위치 표시 (녹색)
+                    cv.circle(image, (cx, cy), 3, (0, 0, 255), -1)    # 평균 홍채 중심 표시 (빨간색)
 
                 iris_position = (cx, cy)  # 최종 홍채 위치
-
+        
         return iris_position, image  # 홍채 위치와 처리된 이미지 반환

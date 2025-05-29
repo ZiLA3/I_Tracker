@@ -10,7 +10,6 @@ class UDPManager:
     데이터 송신 및 수신 기능을 제공하며, 콜백 기반의 메시지 처리 시스템을 구현합니다.
     모든 메시지는 UTF-8 인코딩된 문자열 형식으로 주고받습니다.
     """
-
     def __init__(self, ip="127.0.0.1", send_port=5000, receive_port=5001):
         """
         UDP 관리자 초기화
@@ -23,21 +22,19 @@ class UDPManager:
         self.ip = ip  # 통신 대상 IP 주소
         self.send_port = send_port  # 송신 포트
         self.receive_port = receive_port  # 수신 포트
-
+        
         # 송신용 소켓 초기화
-        self.send_sock = socket.socket(
-            socket.AF_INET, socket.SOCK_DGRAM)  # UDP 소켓 생성
-
+        self.send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP 소켓 생성
+        
         # 수신용 소켓 초기화
-        self.receive_sock = socket.socket(
-            socket.AF_INET, socket.SOCK_DGRAM)  # UDP 소켓 생성
+        self.receive_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP 소켓 생성
         self.receive_sock.bind((self.ip, self.receive_port))  # 수신 포트에 바인딩
         self.receive_sock.setblocking(True)  # 블로킹 모드 설정 (동기 통신)
         # 비동기 처리시에는 False로 논블록킹 모드를 활성화해야합니다. (수신 데이터그램 대기)
-
+        
         # 이벤트 콜백 집합 (메시지 타입별 처리 함수)
         self.callbacks = {}  # 키: 메시지 타입, 값: 콜백 함수
-
+        
     def send(self, data):
         """
         데이터를 유니티로 전송
@@ -54,8 +51,7 @@ class UDPManager:
         """
         try:
             # 문자열을 UTF-8로 인코딩하여 바이트로 변환 후 송신
-            self.send_sock.sendto(data.encode('utf-8'),
-                                  (self.ip, self.send_port))
+            self.send_sock.sendto(data.encode('utf-8'), (self.ip, self.send_port))
         except Exception as e:
             print(f"UDP 전송 오류: {e}")  # 오류 메시지 출력
             return False
@@ -81,20 +77,20 @@ class UDPManager:
             data, addr = self.receive_sock.recvfrom(256)
             # 바이트를 UTF-8로 디코딩하여 문자열로 변환
             message = data.decode('utf-8')
-
+            
             # 등록된 콜백 실행 (message_type에 해당하는 콜백이 있는 경우)
             # 콜백 메소드 자체는 메시지(str)만 받고, 내부 로직은 전역 변수를 사용하여 설정
             if message_type in self.callbacks:
                 # 콜백 함수 호출 (메시지와 추가 인자 전달)
-                callback_result = self.callbacks[message_type](
-                    message, callback_args)
+                callback_result = self.callbacks[message_type](message, callback_args)
                 return callback_result
-
+                
             return True  # 메시지 수신 성공했지만 콜백 처리는 없음
         except Exception as e:
             print(f"UDP 수신 오류: {e}")  # 오류 메시지 출력
             return False
-
+        
+    
     def register_callback(self, message_type, callback):
         """
         특정 메시지 타입에 대한 콜백 함수 등록

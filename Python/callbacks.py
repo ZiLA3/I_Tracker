@@ -9,7 +9,6 @@ UDP 통신에서 사용되는 콜백 함수 모듈
 전역 변수를 통해 메인 프로그램과 데이터를 공유합니다.
 """
 
-
 def on_screen_size(message, callback_args=None):
     """
     화면 크기 정보를 수신하는 콜백 함수
@@ -37,8 +36,7 @@ def on_screen_size(message, callback_args=None):
     except Exception as e:
         print(f"(콜백)화면크기 수신 중 오류: {e}")  # 오류 메시지 출력
         return False  # 실패 반환
-
-
+    
 def on_captured(message, pos):
     """
     캘리브레이션 캡처 신호 처리 콜백 함수
@@ -80,14 +78,10 @@ def on_captured(message, pos):
             calibration_points['rb'].append(pos)
         elif message == '4':  # 캘리브레이션 완료
             # 각 포인트의 평균값 계산
-            calibration_points['lt'] = sum(
-                calibration_points['lt']) / len(calibration_points['lt'])
-            calibration_points['rt'] = sum(
-                calibration_points['rt']) / len(calibration_points['rt'])
-            calibration_points['lb'] = sum(
-                calibration_points['lb']) / len(calibration_points['lb'])
-            calibration_points['rb'] = sum(
-                calibration_points['rb']) / len(calibration_points['rb'])
+            calibration_points['lt'] = sum(calibration_points['lt']) / len(calibration_points['lt'])
+            calibration_points['rt'] = sum(calibration_points['rt']) / len(calibration_points['rt'])
+            calibration_points['lb'] = sum(calibration_points['lb']) / len(calibration_points['lb'])
+            calibration_points['rb'] = sum(calibration_points['rb']) / len(calibration_points['rb'])
             capture_mode = False  # 캘리브레이션 모드 종료
 
         return True  # 성공 반환
