@@ -54,11 +54,13 @@ public class MissionLever : MissionObject
     {
         Player.Instance.Mission.SetMissionActive(false);
 
-        Player.Instance.Hand.SetMainHandActive(true); // 손 모델 비활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // 손 미션 타입 초기화
-        Player.Instance.Hand.SetAnimator(null);
+        Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
+        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
+        Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
 
-        inMissionUI?.SetActive(false);
+        if(inMissionUI != null)
+            inMissionUI.SetActive(false);
+
         SetHandActive(false);
 
         base.ResetToMainView();

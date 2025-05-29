@@ -32,7 +32,10 @@ public class MissionRSP : MissionObject
     private void Update()
     {
         if (Input.GetMouseButtonDown(1))
-            ResetToMainView();
+        {
+            // Player.Instance.Hand.SetDefaultRSPState();
+            Invoke("ResetToMainView", 1f); // 실패 시 메인 뷰로 돌아가기
+        }
 
         if(Player.Instance.Mission.currentInteractable == this && Player.Instance.Mission.IsInMission)
             rspTimer -= Time.deltaTime;
@@ -83,7 +86,10 @@ public class MissionRSP : MissionObject
         else if (type == RSPType.Paper && missionRSPType == RSPType.Rock)
             Invoke("SucceedMission", 1f);
         else
+        {
+            Player.Instance.Hand.SetDefaultRSPState();
             Invoke("ResetToMainView", 1f); // 실패 시 메인 뷰로 돌아가기
+        }
 
         Player.Instance.Hand.SetRSPCaptureActive(false); // RSP 캡처 종료
         timeText?.SetActive(false);
@@ -109,8 +115,9 @@ public class MissionRSP : MissionObject
     {
         Player.Instance.Mission.SetMissionActive(false);
 
-        Player.Instance.Hand.SetMainHandActive(true); // 손 모델 비활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // 손 미션 타입 초기화
+        Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
+        Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
+        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
 
         inMissionUI?.SetActive(false);
         timeText?.SetActive(false);

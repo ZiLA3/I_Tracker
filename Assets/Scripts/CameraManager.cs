@@ -8,7 +8,10 @@ public enum CameraType
     doorCamera,
     rspCamera,
     leverCamera,
-    keypadCamera
+    keypadCamera,
+    blackKeyCamera,
+    redKeyCamera,
+    blueKeyCamera
 }
 
 public class CameraManager : MonoBehaviour
@@ -16,7 +19,6 @@ public class CameraManager : MonoBehaviour
     public static CameraManager Instance { get; private set; }
 
     [SerializeField] GameObject mainCamUI;
-    [SerializeField] GameObject handForKey;
 
     private void Awake()
     {
@@ -35,6 +37,9 @@ public class CameraManager : MonoBehaviour
     [SerializeField] Camera rspCamera;
     [SerializeField] Camera leverCamera;
     [SerializeField] Camera keypadCamera;
+    [SerializeField] Camera blackKeyCamera;
+    [SerializeField] Camera redKeyCamera;
+    [SerializeField] Camera blueKeyCamera;
 
     public CameraType CurrentCameraType { get; private set; } = CameraType.mainCamera;
 
@@ -45,6 +50,9 @@ public class CameraManager : MonoBehaviour
         rspCamera.gameObject.SetActive(false);
         keypadCamera.gameObject.SetActive(false);
         leverCamera.gameObject.SetActive(false);
+        blackKeyCamera.gameObject.SetActive(false);
+        redKeyCamera.gameObject.SetActive(false);
+        blueKeyCamera.gameObject.SetActive(false);
 
         mainCamUI.SetActive(false);
 
@@ -70,6 +78,18 @@ public class CameraManager : MonoBehaviour
             case CameraType.leverCamera:
                 CurrentCameraType = CameraType.leverCamera;
                 leverCamera.gameObject.SetActive(true);
+                break;
+            case CameraType.blackKeyCamera:
+                CurrentCameraType = CameraType.blackKeyCamera;
+                blackKeyCamera.gameObject.SetActive(true);
+                break;
+            case CameraType.redKeyCamera:
+                CurrentCameraType = CameraType.redKeyCamera;
+                redKeyCamera.gameObject.SetActive(true);
+                break;
+            case CameraType.blueKeyCamera:
+                CurrentCameraType = CameraType.blueKeyCamera;
+                blueKeyCamera.gameObject.SetActive(true);
                 break;
         }
     }
