@@ -23,7 +23,7 @@ public class MissionRSP : MissionObject
     [SerializeField] float timeToGenerateRSP = 2f;
     [SerializeField] float rspTimer = 0f;
 
-    bool stopped;
+    bool triggered; // 멈춤 여부 -> 메인 뷰로 돌아가거나 성공했을 떄 오작동을 막기 위한 변수
 
     private void Start()
     {
@@ -35,8 +35,8 @@ public class MissionRSP : MissionObject
         if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
             return;
 
-        if(stopped)
-            return; // 미션이 중지된 경우 업데이트 중지
+        if(triggered)
+            return;
 
         if (Input.GetMouseButtonDown(1))
             FailSetting();
@@ -99,13 +99,13 @@ public class MissionRSP : MissionObject
 
     private void SucceedSetting()
     {
-        stopped = true; // RSP 성공 시 미션 중지
+        triggered = true; // RSP 성공 시 미션 중지
         timeText.GetComponent<TextMeshProUGUI>().text = "Succeded!";
         Invoke("SucceedMission", 1f);
     }
     private void FailSetting()
     {
-        stopped = true; // 마우스 오른쪽 버튼 클릭 시 미션 중지
+        triggered = true; // 마우스 오른쪽 버튼 클릭 시 미션 중지
         Player.Instance.Hand.SetDefaultRSPState(); // RSP 상태 초기화
         Invoke(nameof(ResetToMainView), 1f); // 실패 시 메인 뷰로 돌아가기
     }
@@ -114,7 +114,7 @@ public class MissionRSP : MissionObject
     {
         base.Interact();
 
-        stopped = false; // 미션 중지 상태 초기화
+        triggered = false; // 미션 중지 상태 초기화
 
         SetHandActive(true); // 손 활성화
 
@@ -130,6 +130,8 @@ public class MissionRSP : MissionObject
 
     public override void ResetToMainView()
     {
+        base.ResetToMainView();
+
         Player.Instance.Mission.SetMissionActive(false);
 
         Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
@@ -141,8 +143,6 @@ public class MissionRSP : MissionObject
         SetHandActive(false);
 
         handPictureRenderer.sharedMaterial = defaultMat; // 손 재질 초기화
-
-        CameraManager.Instance.ToggleCamera(CameraType.mainCamera); // 메인 카메라로 전환
     }
 
     public override void SucceedMission()

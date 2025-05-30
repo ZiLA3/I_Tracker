@@ -14,11 +14,6 @@ public class Monster : MonoBehaviour
     CharacterController controller;
     Animator anim;
 
-    // State Boolean variables
-    public bool gameOver;
-    public bool lightOn = false;
-    private bool inDeathZone = false;
-
     private void Awake()
     {
         if (Instance == null)
@@ -49,10 +44,10 @@ public class Monster : MonoBehaviour
 
     private void Move()
     {
-        if (inDeathZone)
+        if(Player.Instance.IsGameOver || Player.Instance.IsGameWin)
             return;
 
-        if (Player.Instance.Mission.IsInMission || lightOn || !Player.Instance.Eye.EnemyOnSight)
+        if (Player.Instance.Mission.IsInMission || Player.Instance.Mission.LightTwinkling || !Player.Instance.Eye.EnemyOnSight)
         {
             controller.Move(transform.forward * moveSpeed * Time.deltaTime);
 
@@ -77,12 +72,12 @@ public class Monster : MonoBehaviour
 
     private void GameOver()
     {
-        inDeathZone = true;
+        Player.Instance.Mission.currentInteractable?.ResetToMainView();
+
+        Player.Instance.SetGameOverTrue();
 
         anim.SetBool("Idle", false);
         anim.SetBool("Move", false);
         anim.SetBool("Attack", true);
-
-        Player.Instance.Mission.currentInteractable?.ResetToMainView();
     }
 }

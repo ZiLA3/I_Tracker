@@ -11,6 +11,7 @@ public class MissionManager : MonoBehaviour
 
 
     public bool IsInMission { get; private set; } = false; // 현재 미션 중인지 여부
+    public bool LightTwinkling { get; set; } = false; // 현재 불빛 깜빡임 여부
     public int PlayerKeyCount { get; private set; } = 0;
 
     void Start()
@@ -49,4 +50,6 @@ public class MissionManager : MonoBehaviour
     {
         IsInMission = active;
     }
+
+    public void IncreaseKeyCount() => PlayerKeyCount++; // 플레이어 키 개수 증가
 }

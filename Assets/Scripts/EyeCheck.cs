@@ -36,6 +36,9 @@ public class EyeCheck : MonoBehaviour
 
     private void Update()
     {
+        if (Player.Instance.IsGameWin || Player.Instance.IsGameOver)
+            return;
+
         GenerateEyeRay(); // 선호출
         EyeVisualize(); // 눈 위치 시각화
         CheckEnemyOnSight(); // 적이 시야에 들어왔는지 확인

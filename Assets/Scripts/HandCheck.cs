@@ -21,20 +21,20 @@ public class HandCheck : MonoBehaviour
 {
     Animator anim;
 
-    public HandActionType HandType { get; private set; }
+    public HandActionType HandType { get; private set; } // 손 동작이 레버/catch/가위바위보/None 으로 나누기 위한 변수 -> 오동작을 막기 위함.
 
     public RSPType CurrentRSPType; // { get; private set; }
-    public RSPType InputRSPType; // { get; private set; }
+    public RSPType InputRSPType; // { get; private set; } => 데이터 분석 후 RSP 구분이 되면 그 때 이 변수를 사용하여 RSP 타입을 정해야 함.
     
     public bool leverPullDown; // { get; private set; }
     public bool catchAction; // {get; private set;} 키 잡기 여부
 
-    public bool handTrackingOn; // private
-    private bool rspCapture;
-    bool triggered = false; // 손 잡기 동작이 트리거되었는지 여부
+    public bool handTrackingOn; // private variable
+    private bool rspCapture; // RSP 캡처 활성화 여부 -> 캡처할 때의 동작이 들어가서 혼잡도를 줄이기 위해 사용
+    bool triggered = false; // 손 잡기 동작이 트리거되었는지 여부 -> 애니메이션이 한번만 실행되도록 하기 위함
 
     float timer;
-    float delayTime = 0.3f; // 미션 통과를 위한 시간
+    float delayTime = 0.3f; // 미션 통과를 위한 시간 -> 손 잡기 동작을 다른 스크립트가 인식하기 위한 시간
 
     private void Start()
     {
@@ -56,7 +56,7 @@ public class HandCheck : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F2))
         {
-            catchAction = true; // 키 잡기 동작 활성화
+            SetCatch();
         }
         //
 
@@ -67,15 +67,24 @@ public class HandCheck : MonoBehaviour
         else if (HandType == HandActionType.Catch)
             HandCatch(); // 손 잡기 동작 처리
 
-        // 손 잡기 동작을 위한 타이머
         if (leverPullDown)
         {
             timer -= Time.deltaTime;
 
             if (timer <= 0)
             {
-                catchAction = false; // 손 잡기 동작 완료 후 false로 설정
                 leverPullDown = false; // 손 잡기 동작 완료 후 false로 설정
+                triggered = false; // 손 잡기 동작이 완료되었으므로 트리거 상태 초기화
+            }
+        }
+
+        if (catchAction)
+        {
+            timer -= Time.deltaTime;
+
+            if (timer <= 0)
+            {
+                catchAction = false; // 손 잡기 동작 완료 후 false로 설정
                 triggered = false; // 손 잡기 동작이 완료되었으므로 트리거 상태 초기화
             }
         }
@@ -109,6 +118,7 @@ public class HandCheck : MonoBehaviour
         }              
     }
 
+    // 기본 RSP 상태 설정 메서드 -> 동작이 paper가 되도록 설정
     public void SetDefaultRSPState()
     {
         CurrentRSPType = RSPType.Paper; // 기본 RSP 타입을 Paper로 설정
@@ -137,26 +147,25 @@ public class HandCheck : MonoBehaviour
         }
     }
 
-    public void SetLeverPulldown()
+    private void SetLeverPulldown()
     {
-        leverPullDown = true; // 손 잡기 동작 활성화
+        leverPullDown = true;
 
-        // 손 잡기 동작을 위한 타이머 초기화
         timer = delayTime;
     }
 
-    public void SetCatch()
+    private void SetCatch()
     {
         catchAction = true;
 
-        timer = delayTime; // 손 잡기 동작을 위한 타이머 초기화
+        timer = delayTime;
     }
 
     public void SetHandMissionType(HandActionType type) => HandType = type;
 
     public void SetRSPCaptureActive(bool active) => rspCapture = active;
 
-    public void SetInputRSPType(RSPType type) => InputRSPType = type;
+    public void SetInputRSPType(RSPType type) => InputRSPType = type; // 해당 메서드는 외부에서 RSP 타입을 설정할 때 사용됩니다.
 
     public void SetHandTrackingActive(bool active) => handTrackingOn = active;
 
