@@ -37,7 +37,6 @@ class Tracker:
 
             left_iris = face_landmarks.landmark[LEFT_EYE_MARK]  # 왼쪽 홍채
             clx, cly = (int(left_iris.x * w), int(left_iris.y * h))  # 왼쪽 홍채 x, y좌표 (픽셀)
-              # 왼쪽 홍채 y좌표 (픽셀)
 
             right_iris = face_landmarks.landmark[RIGHT_EYE_MARK]  # 오른쪽 홍채
             crx, cry = ((right_iris.x * w), (right_iris.y * h))  # 오른쪽 홍채 x, y좌표 (픽셀)

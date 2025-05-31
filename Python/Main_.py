@@ -31,21 +31,24 @@ class App:
         return image
 
     def wait_process(self):
-        screen_msg = "1920,1080" # self.udp.receive("screen_size")
+        print("Waiting Screen Size")
+        screen_msg = self.udp.receive("screen_size") #"1920,1080"
 
         if screen_msg:
+            print("Wait End")
             x, y = screen_msg.split(',')
             self.state.screen_size = (int(x), int(y))
             self.state.current = 1
+            print("Capture Start...")
 
     def capture_process(self, iris):
-        capture_msg = f"{self.debug_capture_int}" # self.udp.receive("captured")
-        print(capture_msg)
+        capture_msg = self.udp.receive("captured") #f"{self.debug_capture_int}"
 
         if capture_msg:
-            if self.state.pre_message == capture_msg:
+            if self.state.pre_message != capture_msg:
+                print(f"capture count: {capture_msg}/4\n"
+                      f"capture point: {iris}")
                 self.state.capture(iris)
-            else:
                 self.state.end_capture(capture_msg)
 
             self.state.pre_message = capture_msg
@@ -54,15 +57,18 @@ class App:
             print("Capture End")
             self.xyMapper = xyMapper(self.state.calibration_points, self.state.screen_size)
             self.state.current = 2
+            print("Running...")
 
     def run_process(self, iris, hands):
         iris_mapping = self.xyMapper.map_coordinates(iris)
+        # print(f"{iris} -> {iris_mapping}")
         send_str = Network.get_send_str(iris_mapping, hands)
         self.udp.send(send_str)
 
     def process(self):
         image = self.read_video()
         iris, hands = self.tracker.process(image, False)
+
         match self.state.current:
             case 0:
                 self.wait_process()
