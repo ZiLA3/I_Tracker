@@ -67,7 +67,7 @@ class App:
 
     def process(self):
         image = self.read_video()
-        iris, hands = self.tracker.process(image, False)
+        iris, hands = self.tracker.process(image, debug=True)
 
         match self.state.current:
             case 0:
