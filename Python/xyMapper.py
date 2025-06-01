@@ -1,11 +1,6 @@
 import cv2
 import numpy as np
 
-"""
-
-"""
-
-
 class xyMapper:
     """
     홍채 좌표를 화면 좌표로 매핑하는 클래스
