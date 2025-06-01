@@ -1,4 +1,5 @@
 import socket
+import threading
 import numpy as np
 
 MESSAGE_TYPE = ["SCREEN", "CAPTURE"]
@@ -12,6 +13,7 @@ def get_send_str(iris, hands):
 class UDPState:
     """
     UDP의 상태 클래스
+    각 상태 별 필요한 메소드를 포함합니다.
     """
     def __init__(self):
         self.current = 0
@@ -53,10 +55,9 @@ class UDPState:
 
 class UDPManager:
     """
-    유니티와 통신하는 UDP 관리 클래스
+    UDP 관리 클래스
 
     이 클래스는 Unity 애플리케이션과 Python 코드 간의 UDP 통신을 담당합니다.
-    데이터 송신 및 수신 기능을 제공하며, 콜백 기반의 메시지 처리 시스템을 구현합니다.
     모든 메시지는 UTF-8 인코딩된 문자열 형식으로 주고받습니다.
     """
     def __init__(self, ip="127.0.0.1", send_port=5000, receive_port=5001):
@@ -78,7 +79,8 @@ class UDPManager:
         # 수신용 소켓 초기화
         self.receive_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP 소켓 생성
         self.receive_sock.bind((self.ip, self.receive_port))  # 수신 포트에 바인딩
-        self.receive_sock.setblocking(False)  # 블로킹 모드 설정 (동기 통신)
+        self.receive_sock.setblocking(False)  # 블로킹 모드 설정 (비동기 통신)
+        self.running = False
         
     def send(self, data):
         """
@@ -102,19 +104,18 @@ class UDPManager:
             return False
         return True  # 전송 성공
 
-    def receive(self, message_type=None): #TODO: Thread를 이용한 비동기 처리가 필요함.
+    def receive(self, message_type=None):
         """
-        데이터 수신
+        비동기 수신
 
         Args:
             message_type (str): 처리할 메시지 유형
 
         Returns:
-            bool: 성공 시 True, 실패 시 False
+            str: message, 없으면 ""
 
         Notes:
             - 수신 데이터는 UTF-8로 디코딩하여 문자열로 변환
-            - 블로킹 모드에서는 데이터 수신 전까지 함수가 반환되지 않음
         """
         try:
             # 데이터 수신 (최대 256바이트)

@@ -12,6 +12,10 @@ RECEIVE_PORT = 5001
 PROCESS_DELAY = 30
 
 class App:
+    """
+    메인 클래스
+    트래커에서 정보를 불러와 적절한 매핑 이후 다른 프로세스로 값을 넘겨줍니다. (UDP)
+    """
     def __init__(self):
         self.video = cv.VideoCapture(VIDEO_INDEX)
 
@@ -23,6 +27,9 @@ class App:
         self.debug_capture_int = 0
 
     def read_video(self):
+        """
+        카메라에서 이미지를 반환합니다.
+        """
         success, image = self.video.read()
         image = cv.flip(image, 1)
         if not success:
@@ -31,6 +38,9 @@ class App:
         return image
 
     def wait_process(self):
+        """
+        state 1번: 화면 크기 정보를 입력받습니다.
+        """
         print("Waiting Screen Size")
         screen_msg = self.udp.receive("screen_size") #"1920,1080"
 
@@ -42,6 +52,10 @@ class App:
             print("Capture Start...")
 
     def capture_process(self, iris):
+        """
+        state 2번: 모니터의 끝점 4개를 바라보았을 때 좌표를 측정합니다.
+        측정 이후 입력된 값을 기반으로 매퍼를 생성합니다.
+        """
         capture_msg = self.udp.receive("captured") #f"{self.debug_capture_int}"
 
         if capture_msg:
@@ -60,12 +74,19 @@ class App:
             print("Running...")
 
     def run_process(self, iris, hands):
+        """
+        state 3번: 매핑된 좌표들을 타 프로세스에 내보냅니다.
+        """
         iris_mapping = self.xyMapper.map_coordinates(iris)
         # print(f"{iris} -> {iris_mapping}")
         send_str = Network.get_send_str(iris_mapping, hands)
         self.udp.send(send_str)
 
     def process(self):
+        """
+        현재 프로세스 상태에 따라 실행할 메소드를 결정합니다
+        루프문 내에서 작동되어야 합니다.
+        """
         image = self.read_video()
         iris, hands = self.tracker.process(image, debug=True)
 
