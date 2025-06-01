@@ -3,4 +3,4 @@ Game With Eye Tracking
 
 ### Flow Chart
 
-![I_Tracker_flowchart](https://github.com/user-attachments/assets/92561a76-4249-41a9-b766-c1bc858cafff)
+![I_Tracker_flowchart](https://github.com/ZiLA3/I_Tracker/blob/main/I_Tracker_flowchart.png)
