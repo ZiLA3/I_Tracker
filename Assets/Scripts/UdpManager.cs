@@ -25,13 +25,14 @@ public class UdpManager : MonoBehaviour
     private UdpClient _receiveClient;
     private UdpClient _sendClient;
     private Vector3 _mousePosition;
+
+    public static UdpManager Instance;
     
-    public const string DebugString = 
+    public const string DebugString =
         "1,1##1,1,1/2,1,2/3,1,3/4,1,4/5,1,5/6,1,6/7,1,7/8,1,8/9,1,9/10,1,10/" +
         "11,1,11/12,1,12/13,1,13/14,1,14/15,1,15/16,1,16/17,1,17/18,1,18/19,1,19/20,1,20/21,1,21";
 
-    private const string CalibrationStartSignal = "0,0";
-    private const string CalibrationEndSignal = "1,1";
+    private const string CalibrationStartSignal = "0";
 
     private string GetWindowSizeString()
     {
@@ -103,11 +104,12 @@ public class UdpManager : MonoBehaviour
     
     public void Send(string message)
     {
+        Debug.Log($"Try Send: {message} to {targetIP}:{targetPort}");
         try
         {
             var dataBytes = Encoding.UTF8.GetBytes(message);
             _sendClient.Send(dataBytes, dataBytes.Length, targetIP, targetPort);
-            
+
             if (printDebug)
             {
                 print($"Sent: {message} to {targetIP}:{targetPort}");
@@ -123,12 +125,14 @@ public class UdpManager : MonoBehaviour
     {
         _sendClient?.Close();
     }
-    
+
     void Start()
     {
         StartSend();
-        StartReceive();
+        if(startReceiving)
+            StartReceive();
         Send(CalibrationStartSignal);
+        Instance = this;
     }
 
     void Update()
