@@ -25,6 +25,7 @@ class App:
         self.state = Network.UDPState()
 
         self.debug_capture_int = 0
+        print("Waiting Screen Size")
 
     def read_video(self):
         """
@@ -41,7 +42,6 @@ class App:
         """
         state 1번: 화면 크기 정보를 입력받습니다.
         """
-        print("Waiting Screen Size")
         screen_msg = self.udp.receive("screen_size") #"1920,1080"
 
         if screen_msg:
@@ -101,13 +101,9 @@ class App:
                 self.run_process(iris, hands)
                 pass
 
-        cv.imshow("Tracker", image)
-
         key = cv.waitKey(PROCESS_DELAY)
         if key == ord('q'):
             return False
-        elif key == ord('a'):
-            self.debug_capture_int += 1
 
         return True
 

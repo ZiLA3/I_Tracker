@@ -1,6 +1,6 @@
 import socket
-import threading
 import numpy as np
+import errno
 
 MESSAGE_TYPE = ["SCREEN", "CAPTURE"]
 
@@ -122,7 +122,14 @@ class UDPManager:
             data, addr = self.receive_sock.recvfrom(256)
             message = data.decode('utf-8')
 
-            return message  # 메시지 수신 성공했지만 콜백 처리는 없음
+            return message  # 메시지 수신 성공
+        except OSError as e:
+            # 자원이 일시적으로 사용 불가능함 오류 처리
+            if e.errno == errno.EAGAIN or e.errno == errno.EWOULDBLOCK:
+                return ""  # 메시지 수신 실패 (정상)
+            else:
+                print(f"UDP 수신 오류: {e}")  # 진짜 오류만 출력
+                return ""
         except Exception as e:
             print(f"UDP 수신 오류: {e}")  # 오류 메시지 출력
             return ""
