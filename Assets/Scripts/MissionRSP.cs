@@ -23,7 +23,7 @@ public class MissionRSP : MissionObject
     [SerializeField] float timeToGenerateRSP = 2f;
     [SerializeField] float rspTimer = 0f;
 
-    bool triggered; // ¸ØÃã ¿©ºÎ -> ¸ŞÀÎ ºä·Î µ¹¾Æ°¡°Å³ª ¼º°øÇßÀ» ‹š ¿ÀÀÛµ¿À» ¸·±â À§ÇÑ º¯¼ö
+    bool triggered; // ë©ˆì¶¤ ì—¬ë¶€ -> ë©”ì¸ ë·°ë¡œ ëŒì•„ê°€ê±°ë‚˜ ì„±ê³µí–ˆì„ ë–„ ì˜¤ì‘ë™ì„ ë§‰ê¸° ìœ„í•œ ë³€ìˆ˜
 
     private void Start()
     {
@@ -78,7 +78,7 @@ public class MissionRSP : MissionObject
 
     private void CheckRSP()
     {
-        Player.Instance.Hand.SetRSPCaptureActive(true); // RSP Ä¸Ã³ ½ÃÀÛ
+        Player.Instance.Hand.SetRSPCaptureActive(true); // RSP ìº¡ì²˜ ì‹œì‘
 
         RSPType type = Player.Instance.Hand.CurrentRSPType;
 
@@ -94,36 +94,36 @@ public class MissionRSP : MissionObject
             timeText.GetComponent<TextMeshProUGUI>().text = "Failed!";
         }
 
-        Player.Instance.Hand.SetRSPCaptureActive(false); // RSP Ä¸Ã³ Á¾·á
+        Player.Instance.Hand.SetRSPCaptureActive(false); // RSP ìº¡ì²˜ ì¢…ë£Œ
     }
 
     private void SucceedSetting()
     {
-        triggered = true; // RSP ¼º°ø ½Ã ¹Ì¼Ç ÁßÁö
+        triggered = true; // RSP ì„±ê³µ ì‹œ ë¯¸ì…˜ ì¤‘ì§€
         timeText.GetComponent<TextMeshProUGUI>().text = "Succeded!";
         Invoke("SucceedMission", 1f);
     }
     private void FailSetting()
     {
-        triggered = true; // ¸¶¿ì½º ¿À¸¥ÂÊ ¹öÆ° Å¬¸¯ ½Ã ¹Ì¼Ç ÁßÁö
-        Player.Instance.Hand.SetDefaultRSPState(); // RSP »óÅÂ ÃÊ±âÈ­
-        Invoke(nameof(ResetToMainView), 1f); // ½ÇÆĞ ½Ã ¸ŞÀÎ ºä·Î µ¹¾Æ°¡±â
+        triggered = true; // ë§ˆìš°ìŠ¤ ì˜¤ë¥¸ìª½ ë²„íŠ¼ í´ë¦­ ì‹œ ë¯¸ì…˜ ì¤‘ì§€
+        Player.Instance.Hand.SetDefaultRSPState(); // RSP ìƒíƒœ ì´ˆê¸°í™”
+        Invoke(nameof(ResetToMainView), 1f); // ì‹¤íŒ¨ ì‹œ ë©”ì¸ ë·°ë¡œ ëŒì•„ê°€ê¸°
     }
 
     public override void Interact()
     {
         base.Interact();
 
-        triggered = false; // ¹Ì¼Ç ÁßÁö »óÅÂ ÃÊ±âÈ­
+        triggered = false; // ë¯¸ì…˜ ì¤‘ì§€ ìƒíƒœ ì´ˆê¸°í™”
 
-        SetHandActive(true); // ¼Õ È°¼ºÈ­
+        SetHandActive(true); // ì† í™œì„±í™”
 
-        Player.Instance.Hand.SetHandTrackingActive(true); // ¼Õ ÃßÀû È°¼ºÈ­
-        Player.Instance.Hand.SetHandMissionType(HandActionType.RSP); // RSP ¹Ì¼Ç Å¸ÀÔ ¼³Á¤
+        Player.Instance.Hand.SetHandTrackingActive(true); // ì† ì¶”ì  í™œì„±í™”
+        Player.Instance.Hand.SetHandMissionType(HandActionType.RSP); // RSP ë¯¸ì…˜ íƒ€ì… ì„¤ì •
         Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
 
         timeText?.SetActive(true);
-        rspTimer = timeToGenerateRSP; // RSP Å¸ÀÌ¸Ó ÃÊ±âÈ­
+        rspTimer = timeToGenerateRSP; // RSP íƒ€ì´ë¨¸ ì´ˆê¸°í™”
 
         CameraManager.Instance.ToggleCamera(CameraType.rspCamera);
     }
@@ -134,15 +134,15 @@ public class MissionRSP : MissionObject
 
         Player.Instance.Mission.SetMissionActive(false);
 
-        Player.Instance.Hand.SetAnimator(null); // ¾Ö´Ï¸ŞÀÌÅÍ ÃÊ±âÈ­
-        Player.Instance.Hand.SetHandTrackingActive(false); // ¼Õ ÃßÀû È°¼ºÈ­
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // ¼Õ ¹Ì¼Ç Å¸ÀÔ ÃÊ±âÈ­
+        Player.Instance.Hand.SetAnimator(null); // ì• ë‹ˆë©”ì´í„° ì´ˆê¸°í™”
+        Player.Instance.Hand.SetHandTrackingActive(false); // ì† ì¶”ì  í™œì„±í™”
+        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // ì† ë¯¸ì…˜ íƒ€ì… ì´ˆê¸°í™”
 
         inMissionUI.SetActive(false);
         timeText.SetActive(false);
         SetHandActive(false);
 
-        handPictureRenderer.sharedMaterial = defaultMat; // ¼Õ ÀçÁú ÃÊ±âÈ­
+        handPictureRenderer.sharedMaterial = defaultMat; // ì† ì¬ì§ˆ ì´ˆê¸°í™”
     }
 
     public override void SucceedMission()

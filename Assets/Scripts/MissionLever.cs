@@ -5,14 +5,14 @@ using UnityEngine;
 public class MissionLever : MissionObject
 {
     [Header("Lever Settings")]
-    [SerializeField] GameObject leverHandle; // ·¹¹ö ÇÚµé ¿ÀºêÁ§Æ®
+    [SerializeField] GameObject leverHandle; // ë ˆë²„ í•¸ë“¤ ì˜¤ë¸Œì íŠ¸
     [Space]
     [SerializeField] Vector3 leverLastEulerAngle;
-    [SerializeField] float rotateSpeed = 5f; // ·¹¹ö È¸Àü ¼Óµµ
-    [SerializeField] float delayTimeToRotate = .5f; // ·¹¹ö ´ç±è µô·¹ÀÌ ½Ã°£
+    [SerializeField] float rotateSpeed = 5f; // ë ˆë²„ íšŒì „ ì†ë„
+    [SerializeField] float delayTimeToRotate = .5f; // ë ˆë²„ ë‹¹ê¹€ ë”œë ˆì´ ì‹œê°„
 
-    bool isLeverPulled = false; // ·¹¹ö°¡ ´ç°ÜÁ³´ÂÁö ¿©ºÎ
-    bool succeeded = false; // ¼º°ø ¿©ºÎ -> ¼º°øÇßÀ» ¶§ ¿ÀÀÛµ¿À» ¸·±â À§ÇÑ º¯¼ö
+    bool isLeverPulled = false; // ë ˆë²„ê°€ ë‹¹ê²¨ì¡ŒëŠ”ì§€ ì—¬ë¶€
+    bool succeeded = false; // ì„±ê³µ ì—¬ë¶€ -> ì„±ê³µí–ˆì„ ë•Œ ì˜¤ì‘ë™ì„ ë§‰ê¸° ìœ„í•œ ë³€ìˆ˜
     private void Update()
     {
         if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
@@ -31,7 +31,7 @@ public class MissionLever : MissionObject
 
         if (Player.Instance.Hand.leverPullDown)
         {
-            Invoke(nameof(SetLeverPulledTrue), delayTimeToRotate); // ·¹¹ö ´ç±è »óÅÂ¸¦ true·Î ¼³Á¤
+            Invoke(nameof(SetLeverPulledTrue), delayTimeToRotate); // ë ˆë²„ ë‹¹ê¹€ ìƒíƒœë¥¼ trueë¡œ ì„¤ì •
 
             succeeded = true;
             Invoke("SucceedMission", 1.2f);
@@ -46,8 +46,8 @@ public class MissionLever : MissionObject
 
         SetHandActive(true);
 
-        Player.Instance.Hand.SetHandTrackingActive(true); // ¼Õ ÃßÀû È°¼ºÈ­
-        Player.Instance.Hand.SetHandMissionType(HandActionType.PullDown); // RSP ¹Ì¼Ç Å¸ÀÔ ¼³Á¤
+        Player.Instance.Hand.SetHandTrackingActive(true); // ì† ì¶”ì  í™œì„±í™”
+        Player.Instance.Hand.SetHandMissionType(HandActionType.PullDown); // RSP ë¯¸ì…˜ íƒ€ì… ì„¤ì •
         Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
 
         CameraManager.Instance.ToggleCamera(CameraType.leverCamera);
@@ -59,9 +59,9 @@ public class MissionLever : MissionObject
 
         Player.Instance.Mission.SetMissionActive(false);
 
-        Player.Instance.Hand.SetHandTrackingActive(false); // ¼Õ ÃßÀû È°¼ºÈ­
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // ¼Õ ¹Ì¼Ç Å¸ÀÔ ÃÊ±âÈ­
-        Player.Instance.Hand.SetAnimator(null); // ¾Ö´Ï¸ŞÀÌÅÍ ÃÊ±âÈ­
+        Player.Instance.Hand.SetHandTrackingActive(false); // ì† ì¶”ì  í™œì„±í™”
+        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // ì† ë¯¸ì…˜ íƒ€ì… ì´ˆê¸°í™”
+        Player.Instance.Hand.SetAnimator(null); // ì• ë‹ˆë©”ì´í„° ì´ˆê¸°í™”
 
         if(inMissionUI != null)
             inMissionUI.SetActive(false);
@@ -73,6 +73,6 @@ public class MissionLever : MissionObject
     {
         base.SucceedMission();
 
-        isLeverPulled = false; // ·¹¹ö ´ç±è »óÅÂ ÃÊ±âÈ­
+        isLeverPulled = false; // ë ˆë²„ ë‹¹ê¹€ ìƒíƒœ ì´ˆê¸°í™”
     }
 }

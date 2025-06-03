@@ -129,9 +129,10 @@ public class UdpManager : MonoBehaviour
 
     void Start()
     {
+        if(startReceiving)
+            StartReceive();
         StartSend();
-        StartReceive();
-        Send(CalibrationStartSignal);
+        Send("1920,1080");
     }
 
     void Update()

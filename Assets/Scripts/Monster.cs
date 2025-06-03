@@ -32,7 +32,7 @@ public class Monster : MonoBehaviour
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
 
-        // ÃÊ±â ¾Ö´Ï¸ŞÀÌ¼Ç »óÅÂ ¼³Á¤
+        // ì´ˆê¸° ì• ë‹ˆë©”ì´ì…˜ ìƒíƒœ ì„¤ì •
         anim.SetBool("Idle", true);
         anim.SetBool("Move", false);
     }

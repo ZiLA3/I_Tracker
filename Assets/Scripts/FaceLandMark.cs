@@ -1,9 +1,11 @@
 using UnityEngine;
+
 public static class FaceLandmark
 {
     public static Vector2 EyePoint;
 
     public static readonly Vector3[] HandPoints = new Vector3[21];
+    public static readonly bool[] HandFolds = new bool[] { false, false, false, false };
 
     public static bool HasEyePointLeft => EyePoint != -Vector2.one;
     public static bool HasHandPoint => HandPoints[0] != -Vector3.one;
@@ -32,8 +34,34 @@ public static class FaceLandmark
             HandPoints[i] = StringToVector3(handRawData);
             i++;
         }
+
+        if (HasHandPoint)
+        {
+            for (i = 0; i < 4; i++)
+                HandFolds[i] = IsFingerFold(i);
+        }
     }
 
+    private static readonly int[,] FingerIndexes = { { 8, 6 }, { 12, 10 }, { 16, 14 }, { 20, 17 } };
+    // 0 = 검지, 1 = 중지, 2 = 약지, 3 = 소지 
+
+    private static float GetDistanceXY(Vector3 p1, Vector3 p2)
+    {
+        var distanceXY = (new Vector2(p1.x, p1.y) - new Vector2(p2.x, p2.y)).magnitude;
+        return distanceXY;
+    }
+
+    private static bool IsFingerFold(int fingerIndex)
+    {
+        var startTip = FingerIndexes[fingerIndex, 1];
+        var startDis = GetDistanceXY(HandPoints[startTip], HandPoints[0]);
+
+        var endTip = FingerIndexes[fingerIndex, 0];
+        var endDis = GetDistanceXY(HandPoints[endTip], HandPoints[0]);
+
+        return startDis > endDis;
+    }
+    
     public static string ToStr()
     {
         var str = $"Eye Point: {EyePoint}";

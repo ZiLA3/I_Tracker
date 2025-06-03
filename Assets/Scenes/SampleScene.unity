@@ -5286,7 +5286,7 @@ MonoBehaviour:
   data: 
   targetIP: 127.0.0.1
   targetPort: 5001
-  useMousePoint: 1
+  useMousePoint: 0
 --- !u!1 &969603707
 GameObject:
   m_ObjectHideFlags: 0
@@ -6543,7 +6543,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 72887729}
-  - {fileID: 6083277470003304222}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1120493703
@@ -9566,6 +9565,7 @@ GameObject:
   - component: {fileID: 1782737308}
   - component: {fileID: 1782737310}
   - component: {fileID: 1782737309}
+  - component: {fileID: 1782737312}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -9652,6 +9652,19 @@ MonoBehaviour:
   keyCountText: {fileID: 1203684125}
   timeToShowWinUI: 1
   timeToShowLoseUI: 1
+--- !u!114 &1782737312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782737306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94be7b24833832a4793324fbc21e9a5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handCheck: {fileID: 1782737310}
 --- !u!1 &1791138643
 GameObject:
   m_ObjectHideFlags: 0
@@ -11128,11 +11141,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 5
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!4 &113783151122577137
 Transform:
   m_ObjectHideFlags: 0
@@ -11913,11 +11921,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 7
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!1 &1451627806408948520
 GameObject:
   m_ObjectHideFlags: 0
@@ -13070,11 +13073,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 3
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!4 &3153901803376233390
 Transform:
   m_ObjectHideFlags: 0
@@ -13710,11 +13708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 8
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!1 &3735164246723203512
 GameObject:
   m_ObjectHideFlags: 0
@@ -14067,11 +14060,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 2
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!1 &4181965007926002962
 GameObject:
   m_ObjectHideFlags: 0
@@ -14818,11 +14806,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 6
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!4 &5472125810371482880
 Transform:
   m_ObjectHideFlags: 0
@@ -14918,38 +14901,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f664f9a675c7ff4689df5ab3302c58a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onAccessGranted:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7845426148202813589}
-        m_TargetAssemblyTypeName: NavKeypad.KeypadInteractionFPV, Assembly-CSharp
-        m_MethodName: SucceedMissionDelay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  onAccessDenied:
-    m_PersistentCalls:
-      m_Calls: []
-  keypadCombo: 1234
-  accessGrantedText: Granted
-  accessDeniedText: Denied
-  displayResultTime: 1
-  screenIntensity: 2.2
-  screenNormalColor: {r: 0.050558835, g: 0.67017144, b: 0.9924528, a: 0}
-  screenDeniedColor: {r: 1, g: 0, b: 0, a: 1}
-  screenGrantedColor: {r: 0, g: 0.62, b: 0.07, a: 1}
-  buttonClickedSfx: {fileID: 8300000, guid: 89d62380470be9e47ba7cf3f97105142, type: 3}
-  accessDeniedSfx: {fileID: 8300000, guid: 6badc82930e38c34891f46e1f01f63d3, type: 3}
-  accessGrantedSfx: {fileID: 8300000, guid: 54ccf978c7886364c980d9f84ff32bd3, type: 3}
-  panelMesh: {fileID: 2879674562657861424}
-  keypadDisplayText: {fileID: 7027551245755795721}
-  audioSource: {fileID: 3311561296964929261}
 --- !u!4 &5707834640574310484
 Transform:
   m_ObjectHideFlags: 0
@@ -15253,7 +15204,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6045693126524316590}
-  m_Father: {fileID: 1089321104}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &6083277470003304225
 GameObject:
@@ -15312,7 +15263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a5f5733a7ca5e4c85d058cd8957cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
+  moveSpeed: 0.25
 --- !u!136 &6083277470003304229
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -16902,11 +16853,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2974149c6fb01b409a280581634da96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactUI: {fileID: 948349825}
-  hand: {fileID: 919132148112702727}
-  inMissionUI: {fileID: 1655472953}
-  clearKey: {fileID: 2088917541424910068}
-  delayTime: 0.3
 --- !u!4 &7863301622943250157
 Transform:
   m_ObjectHideFlags: 0
@@ -17020,11 +16966,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 4
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!4 &7967766327009328054
 Transform:
   m_ObjectHideFlags: 0
@@ -17103,11 +17044,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 9
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!137 &7999954541813980226
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -17346,11 +17282,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!1 &8193765511693898104
 GameObject:
   m_ObjectHideFlags: 0
@@ -17836,11 +17767,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: enter
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!23 &8836766585029562388
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -17947,11 +17873,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ac5d48f7ac3dd4c942c39754704854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 1
-  bttnspeed: 0.1
-  moveDist: 0.0025
-  buttonPressedTime: 0.1
-  keypad: {fileID: 5602169550385378221}
 --- !u!4 &8930354593127280426
 Transform:
   m_ObjectHideFlags: 0
@@ -18148,3 +18069,4 @@ SceneRoots:
   - {fileID: 1089321104}
   - {fileID: 81281961}
   - {fileID: 906377946}
+  - {fileID: 6083277470003304222}

@@ -1,19 +1,69 @@
 import socket
-import time
+import numpy as np
+import errno
+
+MESSAGE_TYPE = ["SCREEN", "CAPTURE"]
+
+def get_send_str(iris, hands):
+    iris_str = f"{iris[0]},{iris[1]}"
+    hands_str = "/".join(f"{h[0]},{h[1]},{h[2]}" for h in hands)
+    send_str = iris_str + "##" + hands_str
+    return send_str
+
+class UDPState:
+    """
+    UDP의 상태 클래스
+    각 상태 별 필요한 메소드를 포함합니다.
+    """
+    def __init__(self):
+        self.current = 0
+
+        self.calibration_points = {
+            "LeftTop": [-1, -1],
+            "RightTop": [-1, -1],
+            "LeftBottom": [-1, -1],
+            "RightBottom": [-1, -1]
+        }
+        self.message_to_points = {
+            "1": "LeftTop",
+            "2": "RightTop",
+            "3": "LeftBottom",
+            "4": "RightBottom"
+        }
+
+        self.temp_array = np.empty((2, 0))
+        self.screen_size = [-1, -1]
+        self.pre_message = "0"
+
+    def is_get_screen(self):
+        return self.screen_size == (-1, -1)
+
+    def is_all_captured(self):
+        return self.calibration_points["RightBottom"][0] != -1
+
+    def capture(self, iris):
+        iris = np.array(iris).reshape((2, 1))
+        self.temp_array = np.hstack([self.temp_array, iris])
+
+    def end_capture(self, msg):
+        x, y = self.temp_array[0].mean(), self.temp_array[1].mean()
+        self.temp_array = np.empty((2, 0))
+
+        self.calibration_points[self.message_to_points[msg]][0] = x
+        self.calibration_points[self.message_to_points[msg]][1] = y
 
 
 class UDPManager:
     """
-    유니티와 통신하는 UDP 관리 클래스
-    
+    UDP 관리 클래스
+
     이 클래스는 Unity 애플리케이션과 Python 코드 간의 UDP 통신을 담당합니다.
-    데이터 송신 및 수신 기능을 제공하며, 콜백 기반의 메시지 처리 시스템을 구현합니다.
     모든 메시지는 UTF-8 인코딩된 문자열 형식으로 주고받습니다.
     """
     def __init__(self, ip="127.0.0.1", send_port=5000, receive_port=5001):
         """
         UDP 관리자 초기화
-        
+
         Args:
             ip (str): 통신할 IP 주소 (기본값: "127.0.0.1" - localhost)
             send_port (int): 데이터 송신용 포트 번호 (기본값: 5000)
@@ -29,22 +79,19 @@ class UDPManager:
         # 수신용 소켓 초기화
         self.receive_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP 소켓 생성
         self.receive_sock.bind((self.ip, self.receive_port))  # 수신 포트에 바인딩
-        self.receive_sock.setblocking(True)  # 블로킹 모드 설정 (동기 통신)
-        # 비동기 처리시에는 False로 논블록킹 모드를 활성화해야합니다. (수신 데이터그램 대기)
-        
-        # 이벤트 콜백 집합 (메시지 타입별 처리 함수)
-        self.callbacks = {}  # 키: 메시지 타입, 값: 콜백 함수
+        self.receive_sock.setblocking(False)  # 블로킹 모드 설정 (비동기 통신)
+        self.running = False
         
     def send(self, data):
         """
         데이터를 유니티로 전송
-        
+
         Args:
             data (str): 전송할 데이터 문자열
-            
+
         Returns:
             bool: 성공 시 True, 실패 시 False
-            
+
         Notes:
             - 데이터는 UTF-8로 인코딩 후 전송됨
             - 권장 전송 형식은 문자열(str)
@@ -57,56 +104,36 @@ class UDPManager:
             return False
         return True  # 전송 성공
 
-    def receive(self, message_type=None, callback_args=None):
+    def receive(self, message_type=None):
         """
-        데이터를 수신하고 지정된 메시지 타입에 대한 콜백 함수 호출
-        
+        비동기 수신
+
         Args:
-            message_type (str): 처리할 메시지 유형 (콜백 함수 선택용)
-            callback_args: 콜백 함수에 추가로 전달할 인자 (선택적)
-            
+            message_type (str): 처리할 메시지 유형
+
         Returns:
-            bool: 성공 시 True, 실패 시 False
-            
+            str: message, 없으면 ""
+
         Notes:
             - 수신 데이터는 UTF-8로 디코딩하여 문자열로 변환
-            - 블로킹 모드에서는 데이터 수신 전까지 함수가 반환되지 않음
         """
         try:
             # 데이터 수신 (최대 256바이트)
             data, addr = self.receive_sock.recvfrom(256)
-            # 바이트를 UTF-8로 디코딩하여 문자열로 변환
             message = data.decode('utf-8')
-            
-            # 등록된 콜백 실행 (message_type에 해당하는 콜백이 있는 경우)
-            # 콜백 메소드 자체는 메시지(str)만 받고, 내부 로직은 전역 변수를 사용하여 설정
-            if message_type in self.callbacks:
-                # 콜백 함수 호출 (메시지와 추가 인자 전달)
-                callback_result = self.callbacks[message_type](message, callback_args)
-                return callback_result
-                
-            return True  # 메시지 수신 성공했지만 콜백 처리는 없음
+
+            return message  # 메시지 수신 성공
+        except OSError as e:
+            # 자원이 일시적으로 사용 불가능함 오류 처리
+            if e.errno == errno.EAGAIN or e.errno == errno.EWOULDBLOCK:
+                return ""  # 메시지 수신 실패 (정상)
+            else:
+                print(f"UDP 수신 오류: {e}")  # 진짜 오류만 출력
+                return ""
         except Exception as e:
             print(f"UDP 수신 오류: {e}")  # 오류 메시지 출력
-            return False
-        
-    
-    def register_callback(self, message_type, callback):
-        """
-        특정 메시지 타입에 대한 콜백 함수 등록
-        
-        Args:
-            message_type (str): 콜백을 등록할 메시지 유형
-            callback (callable): 해당 메시지 타입 수신 시 호출할 콜백 함수
-            
-        Returns:
-            bool: 등록 성공 시 True
-            
-        Notes:
-            - 콜백 함수는 message, callback_args 형태의 인자를 받아야 함
-        """
-        self.callbacks[message_type] = callback  # 콜백 함수 등록
-        return True
+            return ""
+
 
     def close(self):
         """

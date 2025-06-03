@@ -11,36 +11,36 @@ public enum RSPType
 
 public enum HandActionType 
 {
-    None,
-    RSP = 0,
-    PullDown = 1,
-    Catch = 2,
+    None = 0,
+    RSP = 1,
+    PullDown = 2,
+    Catch = 3,
 }
 
 public class HandCheck : MonoBehaviour
 {
     Animator anim;
 
-    public HandActionType HandType { get; private set; } // ¼Õ µ¿ÀÛÀÌ ·¹¹ö/catch/°¡À§¹ÙÀ§º¸/None À¸·Î ³ª´©±â À§ÇÑ º¯¼ö -> ¿Àµ¿ÀÛÀ» ¸·±â À§ÇÔ.
+    public HandActionType HandType { get; private set; } // ì† ë™ì‘ì´ ë ˆë²„/catch/ê°€ìœ„ë°”ìœ„ë³´/None ìœ¼ë¡œ ë‚˜ëˆ„ê¸° ìœ„í•œ ë³€ìˆ˜ -> ì˜¤ë™ì‘ì„ ë§‰ê¸° ìœ„í•¨.
 
     public RSPType CurrentRSPType; // { get; private set; }
-    public RSPType InputRSPType; // { get; private set; } => µ¥ÀÌÅÍ ºĞ¼® ÈÄ RSP ±¸ºĞÀÌ µÇ¸é ±× ¶§ ÀÌ º¯¼ö¸¦ »ç¿ëÇÏ¿© RSP Å¸ÀÔÀ» Á¤ÇØ¾ß ÇÔ.
-    
+    public RSPType InputRSPType; // { get; private set; } => ë°ì´í„° ë¶„ì„ í›„ RSP êµ¬ë¶„ì´ ë˜ë©´ ê·¸ ë•Œ ì´ ë³€ìˆ˜ë¥¼ ì‚¬ìš©í•˜ì—¬ RSP íƒ€ì…ì„ ì •í•´ì•¼ í•¨.
+
     public bool leverPullDown; // { get; private set; }
-    public bool catchAction; // {get; private set;} Å° Àâ±â ¿©ºÎ
+    public bool catchAction; // {get; private set;} í‚¤ ì¡ê¸° ì—¬ë¶€
 
     public bool handTrackingOn; // private variable
-    private bool rspCapture; // RSP Ä¸Ã³ È°¼ºÈ­ ¿©ºÎ -> Ä¸Ã³ÇÒ ¶§ÀÇ µ¿ÀÛÀÌ µé¾î°¡¼­ È¥Àâµµ¸¦ ÁÙÀÌ±â À§ÇØ »ç¿ë
-    bool triggered = false; // ¼Õ Àâ±â µ¿ÀÛÀÌ Æ®¸®°ÅµÇ¾ú´ÂÁö ¿©ºÎ -> ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ÇÑ¹ø¸¸ ½ÇÇàµÇµµ·Ï ÇÏ±â À§ÇÔ
+    private bool rspCapture; // RSP ìº¡ì²˜ í™œì„±í™” ì—¬ë¶€ -> ìº¡ì²˜í•  ë•Œì˜ ë™ì‘ì´ ë“¤ì–´ê°€ì„œ í˜¼ì¡ë„ë¥¼ ì¤„ì´ê¸° ìœ„í•´ ì‚¬ìš©
+    bool triggered = false; // ì† ì¡ê¸° ë™ì‘ì´ íŠ¸ë¦¬ê±°ë˜ì—ˆëŠ”ì§€ ì—¬ë¶€ -> ì• ë‹ˆë©”ì´ì…˜ì´ í•œë²ˆë§Œ ì‹¤í–‰ë˜ë„ë¡ í•˜ê¸° ìœ„í•¨
 
     float timer;
-    float delayTime = 0.3f; // ¹Ì¼Ç Åë°ú¸¦ À§ÇÑ ½Ã°£ -> ¼Õ Àâ±â µ¿ÀÛÀ» ´Ù¸¥ ½ºÅ©¸³Æ®°¡ ÀÎ½ÄÇÏ±â À§ÇÑ ½Ã°£
+    float delayTime = 0.3f; // ë¯¸ì…˜ í†µê³¼ë¥¼ ìœ„í•œ ì‹œê°„ -> ì† ì¡ê¸° ë™ì‘ì„ ë‹¤ë¥¸ ìŠ¤í¬ë¦½íŠ¸ê°€ ì¸ì‹í•˜ê¸° ìœ„í•œ ì‹œê°„
 
     private void Start()
     {
         HandType = HandActionType.Catch;
-        CurrentRSPType = RSPType.Paper; // ÃÊ±â°ª ¼³Á¤
-        InputRSPType = RSPType.Paper; // ÃÊ±â°ª ¼³Á¤
+        CurrentRSPType = RSPType.Paper; // ì´ˆê¸°ê°’ ì„¤ì •
+        InputRSPType = RSPType.Paper; // ì´ˆê¸°ê°’ ì„¤ì •
     }
 
     void Update()
@@ -48,12 +48,13 @@ public class HandCheck : MonoBehaviour
         if (!handTrackingOn)
             return;
 
-        // TEST ¿ë Input ½Ã±×³Î
+        // TEST ìš© Input ì‹œê·¸ë„
 
-        if (Input.GetKeyDown(KeyCode.F1)) 
+        if (Input.GetKeyDown(KeyCode.F1))
         {
             SetLeverPulldown();
         }
+
         if (Input.GetKeyDown(KeyCode.F2))
         {
             SetCatch();
@@ -65,7 +66,7 @@ public class HandCheck : MonoBehaviour
         else if (HandType == HandActionType.PullDown)
             HandPullDown();
         else if (HandType == HandActionType.Catch)
-            HandCatch(); // ¼Õ Àâ±â µ¿ÀÛ Ã³¸®
+            HandCatch(); // ì† ì¡ê¸° ë™ì‘ ì²˜ë¦¬
 
         if (leverPullDown)
         {
@@ -73,8 +74,8 @@ public class HandCheck : MonoBehaviour
 
             if (timer <= 0)
             {
-                leverPullDown = false; // ¼Õ Àâ±â µ¿ÀÛ ¿Ï·á ÈÄ false·Î ¼³Á¤
-                triggered = false; // ¼Õ Àâ±â µ¿ÀÛÀÌ ¿Ï·áµÇ¾úÀ¸¹Ç·Î Æ®¸®°Å »óÅÂ ÃÊ±âÈ­
+                leverPullDown = false; // ì† ì¡ê¸° ë™ì‘ ì™„ë£Œ í›„ falseë¡œ ì„¤ì •
+                triggered = false; // ì† ì¡ê¸° ë™ì‘ì´ ì™„ë£Œë˜ì—ˆìœ¼ë¯€ë¡œ íŠ¸ë¦¬ê±° ìƒíƒœ ì´ˆê¸°í™”
             }
         }
 
@@ -84,27 +85,27 @@ public class HandCheck : MonoBehaviour
 
             if (timer <= 0)
             {
-                catchAction = false; // ¼Õ Àâ±â µ¿ÀÛ ¿Ï·á ÈÄ false·Î ¼³Á¤
-                triggered = false; // ¼Õ Àâ±â µ¿ÀÛÀÌ ¿Ï·áµÇ¾úÀ¸¹Ç·Î Æ®¸®°Å »óÅÂ ÃÊ±âÈ­
+                catchAction = false; // ì† ì¡ê¸° ë™ì‘ ì™„ë£Œ í›„ falseë¡œ ì„¤ì •
+                triggered = false; // ì† ì¡ê¸° ë™ì‘ì´ ì™„ë£Œë˜ì—ˆìœ¼ë¯€ë¡œ íŠ¸ë¦¬ê±° ìƒíƒœ ì´ˆê¸°í™”
             }
         }
     }
 
-    private void GenerateRSP() 
+    private void GenerateRSP()
     {
         if (CurrentRSPType == InputRSPType)
             return;
 
-        if(rspCapture) // RSP Ä¸Ã³°¡ È°¼ºÈ­µÈ °æ¿ì È¥Àâµµ¸¦ ÁÙÀÌ±â À§ÇØ¼­
+        if (rspCapture) // RSP ìº¡ì²˜ê°€ í™œì„±í™”ëœ ê²½ìš° í˜¼ì¡ë„ë¥¼ ì¤„ì´ê¸° ìœ„í•´ì„œ
             return;
 
-        CurrentRSPType = InputRSPType; // ÀÔ·ÂµÈ RSP Å¸ÀÔÀ¸·Î ¾÷µ¥ÀÌÆ®
+        CurrentRSPType = InputRSPType; // ì…ë ¥ëœ RSP íƒ€ì…ìœ¼ë¡œ ì—…ë°ì´íŠ¸
 
         anim.SetBool("Sissor", false);
         anim.SetBool("Paper", false);
         anim.SetBool("Rock", false);
 
-        switch (CurrentRSPType) 
+        switch (CurrentRSPType)
         {
             case RSPType.Rock:
                 anim.SetBool("Rock", true);
@@ -115,14 +116,14 @@ public class HandCheck : MonoBehaviour
             case RSPType.Paper:
                 anim.SetBool("Paper", true);
                 break;
-        }              
+        }
     }
 
-    // ±âº» RSP »óÅÂ ¼³Á¤ ¸Ş¼­µå -> µ¿ÀÛÀÌ paper°¡ µÇµµ·Ï ¼³Á¤
+    // ê¸°ë³¸ RSP ìƒíƒœ ì„¤ì • ë©”ì„œë“œ -> ë™ì‘ì´ paperê°€ ë˜ë„ë¡ ì„¤ì •
     public void SetDefaultRSPState()
     {
-        CurrentRSPType = RSPType.Paper; // ±âº» RSP Å¸ÀÔÀ» Paper·Î ¼³Á¤
-        InputRSPType = RSPType.Paper; // ÀÔ·ÂµÈ RSP Å¸ÀÔµµ Paper·Î ¼³Á¤
+        CurrentRSPType = RSPType.Paper; // ê¸°ë³¸ RSP íƒ€ì…ì„ Paperë¡œ ì„¤ì •
+        InputRSPType = RSPType.Paper; // ì…ë ¥ëœ RSP íƒ€ì…ë„ Paperë¡œ ì„¤ì •
 
         anim.SetBool("Sissor", false);
         anim.SetBool("Rock", false);
@@ -131,19 +132,19 @@ public class HandCheck : MonoBehaviour
 
     public void HandPullDown()
     {
-        if (leverPullDown && !triggered) 
+        if (leverPullDown && !triggered)
         {
             anim.SetTrigger("Pull");
-            triggered = true; // ¼Õ Àâ±â µ¿ÀÛÀÌ Æ®¸®°ÅµÇ¾úÀ½À» Ç¥½Ã
+            triggered = true; // ì† ì¡ê¸° ë™ì‘ì´ íŠ¸ë¦¬ê±°ë˜ì—ˆìŒì„ í‘œì‹œ
         }
     }
 
-    public void HandCatch() 
+    public void HandCatch()
     {
         if (catchAction && !triggered)
-        { 
+        {
             anim.SetTrigger("Catch");
-            triggered = true; // ¼Õ Àâ±â µ¿ÀÛÀÌ Æ®¸®°ÅµÇ¾úÀ½À» Ç¥½Ã
+            triggered = true; // ì† ì¡ê¸° ë™ì‘ì´ íŠ¸ë¦¬ê±°ë˜ì—ˆìŒì„ í‘œì‹œ
         }
     }
 
@@ -165,13 +166,13 @@ public class HandCheck : MonoBehaviour
 
     public void SetRSPCaptureActive(bool active) => rspCapture = active;
 
-    public void SetInputRSPType(RSPType type) => InputRSPType = type; // ÇØ´ç ¸Ş¼­µå´Â ¿ÜºÎ¿¡¼­ RSP Å¸ÀÔÀ» ¼³Á¤ÇÒ ¶§ »ç¿ëµË´Ï´Ù.
+    public void SetInputRSPType(RSPType type) => InputRSPType = type; // í•´ë‹¹ ë©”ì„œë“œëŠ” ì™¸ë¶€ì—ì„œ RSP íƒ€ì…ì„ ì„¤ì •í•  ë•Œ ì‚¬ìš©ë©ë‹ˆë‹¤.
+    public void SetInputRSPType(int type) => InputRSPType = (RSPType)type; // í•´ë‹¹ ë©”ì„œë“œëŠ” ì™¸ë¶€ì—ì„œ RSP íƒ€ì…ì„ ì„¤ì •í•  ë•Œ ì‚¬ìš©ë©ë‹ˆë‹¤.
 
     public void SetHandTrackingActive(bool active) => handTrackingOn = active;
 
-    public void SetAnimator(Animator handAnim) 
+    public void SetAnimator(Animator handAnim)
     {
         anim = handAnim;
     }
-
 }

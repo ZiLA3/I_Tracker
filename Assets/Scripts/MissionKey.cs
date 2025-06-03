@@ -11,10 +11,10 @@ public enum KeyType
 
 public class MissionKey : MissionObject
 {
-    [SerializeField] KeyType keyType; // Å° Å¸ÀÔ (Black, Red, Blue)
-    [SerializeField] float delayTime = .3f; // ¼Õ µ¿ÀÛÀ» º¸±â À§ÇÑ µô·¹ÀÌ
+    [SerializeField] KeyType keyType; // í‚¤ íƒ€ì… (Black, Red, Blue)
+    [SerializeField] float delayTime = .3f; // ì† ë™ì‘ì„ ë³´ê¸° ìœ„í•œ ë”œë ˆì´
 
-    bool succeeded = false; // ¼º°ø ¿©ºÎ -> ¼º°øÇßÀ» ¶§ ¿ÀÀÛµ¿À» ¸·±â À§ÇÑ º¯¼ö
+    bool succeeded = false; // ì„±ê³µ ì—¬ë¶€ -> ì„±ê³µí–ˆì„ ë•Œ ì˜¤ì‘ë™ì„ ë§‰ê¸° ìœ„í•œ ë³€ìˆ˜
 
     private void Update()
     {
@@ -22,15 +22,15 @@ public class MissionKey : MissionObject
             return;
 
         if (succeeded)
-            return; // ÀÌ¹Ì Å° Àâ±â µ¿ÀÛÀÌ Æ®¸®°ÅµÇ¾úÀ¸¸é ¾÷µ¥ÀÌÆ® ÁßÁö
+            return; // ì´ë¯¸ í‚¤ ì¡ê¸° ë™ì‘ì´ íŠ¸ë¦¬ê±°ë˜ì—ˆìœ¼ë©´ ì—…ë°ì´íŠ¸ ì¤‘ì§€
 
         if (Input.GetMouseButtonDown(1))
             ResetToMainView();
 
         if (Player.Instance.Hand.catchAction)
         {
-            succeeded = true; // Å° Àâ±â µ¿ÀÛÀÌ Æ®¸®°ÅµÊ
-            Invoke("SucceedMission", delayTime); // Å°¸¦ Àâ¾ÒÀ» ¶§ ¹Ì¼Ç ¼º°ø
+            succeeded = true; // í‚¤ ì¡ê¸° ë™ì‘ì´ íŠ¸ë¦¬ê±°ë¨
+            Invoke("SucceedMission", delayTime); // í‚¤ë¥¼ ì¡ì•˜ì„ ë•Œ ë¯¸ì…˜ ì„±ê³µ
         }
 
     }
@@ -41,11 +41,11 @@ public class MissionKey : MissionObject
 
         SetHandActive(true);
 
-        Player.Instance.Hand.SetHandTrackingActive(true); // ¼Õ ÃßÀû È°¼ºÈ­
-        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // RSP ¹Ì¼Ç Å¸ÀÔ ¼³Á¤
+        Player.Instance.Hand.SetHandTrackingActive(true); // ì† ì¶”ì  í™œì„±í™”
+        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // RSP ë¯¸ì…˜ íƒ€ì… ì„¤ì •
         Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
 
-        // Å° Å¸ÀÔ¿¡ µû¶ó Ä«¸Ş¶ó ÀüÈ¯
+        // í‚¤ íƒ€ì…ì— ë”°ë¼ ì¹´ë©”ë¼ ì „í™˜
         switch(keyType)
         {
             case KeyType.Black:
@@ -64,9 +64,9 @@ public class MissionKey : MissionObject
     {
         Player.Instance.Mission.SetMissionActive(false);
 
-        Player.Instance.Hand.SetHandTrackingActive(false); // ¼Õ ÃßÀû È°¼ºÈ­
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // ¼Õ ¹Ì¼Ç Å¸ÀÔ ÃÊ±âÈ­
-        Player.Instance.Hand.SetAnimator(null); // ¾Ö´Ï¸ŞÀÌÅÍ ÃÊ±âÈ­
+        Player.Instance.Hand.SetHandTrackingActive(false); // ì† ì¶”ì  í™œì„±í™”
+        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // ì† ë¯¸ì…˜ íƒ€ì… ì´ˆê¸°í™”
+        Player.Instance.Hand.SetAnimator(null); // ì• ë‹ˆë©”ì´í„° ì´ˆê¸°í™”
 
         if (inMissionUI != null)
             inMissionUI.SetActive(false);
@@ -82,6 +82,6 @@ public class MissionKey : MissionObject
 
         Player.Instance.UpdateKey();
 
-        transform.gameObject.SetActive(false); // Å° ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+        transform.gameObject.SetActive(false); // í‚¤ ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”
     }
 }

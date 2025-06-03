@@ -22,6 +22,9 @@ HANDS = MP_HANDS.Hands(
 MP_DRAW = mp.solutions.drawing_utils
 
 class Tracker:
+    """
+    눈 및 손 위치 추적 클래스
+    """
     def __init__(self):
         self.face_mesh = FACE_MESH
         self.hands = HANDS
@@ -37,7 +40,6 @@ class Tracker:
 
             left_iris = face_landmarks.landmark[LEFT_EYE_MARK]  # 왼쪽 홍채
             clx, cly = (int(left_iris.x * w), int(left_iris.y * h))  # 왼쪽 홍채 x, y좌표 (픽셀)
-              # 왼쪽 홍채 y좌표 (픽셀)
 
             right_iris = face_landmarks.landmark[RIGHT_EYE_MARK]  # 오른쪽 홍채
             crx, cry = ((right_iris.x * w), (right_iris.y * h))  # 오른쪽 홍채 x, y좌표 (픽셀)
@@ -84,6 +86,8 @@ class Tracker:
 
         return iris_pos, hand_pos
 
+
+# 테스트 코드
 if __name__ == "__main__":
     tracker = Tracker()
     cap = cv.VideoCapture(0)
