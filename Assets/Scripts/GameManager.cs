@@ -106,6 +106,14 @@ public class GameManager : MonoBehaviour
 
     public void Restart()
     {
+        IsGameOver = false; // 게임 오버 상태 초기화
+        IsGameWin = false; // 게임 승리 상태 초기화
+        GameStopped = false; // 게임 일시 정지 상태 초기화
+
+        monster.ActiveAnim(true); // 몬스터 애니메이션 활성화
+
+        Time.timeScale = 1f; // 게임 시간 재개
+
         SceneManager.LoadScene(1);
     }
 

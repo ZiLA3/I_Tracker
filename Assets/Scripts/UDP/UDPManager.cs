@@ -128,19 +128,19 @@ public class UdpManager : MonoBehaviour
         _sendClient?.Close();
     }
 
-    void Start()
-    {
-        if(startReceiving)
-            StartReceive();
-        StartSend();
-        Send("1920,1080");
-    }
 
     void Update()
     {
         _mousePosition = Input.mousePosition;
     }
 
+    void OnEnable()
+    {
+        if(startReceiving)
+            StartReceive();
+        StartSend();
+        Send("1920,1080");
+    }
     private void OnDisable()
     {
         StopSend();
