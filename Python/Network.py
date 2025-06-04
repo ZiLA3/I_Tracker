@@ -1,6 +1,6 @@
 import socket
-import threading
 import numpy as np
+import errno
 
 MESSAGE_TYPE = ["SCREEN", "CAPTURE"]
 
@@ -41,17 +41,14 @@ class UDPState:
     def is_all_captured(self):
         return self.calibration_points["RightBottom"][0] != -1
 
-    def capture(self, iris):
-        iris = np.array(iris).reshape((2, 1))
-        self.temp_array = np.hstack([self.temp_array, iris])
-
-    def end_capture(self, msg):
-        x, y = self.temp_array[0].mean(), self.temp_array[1].mean()
-        self.temp_array = np.empty((2, 0))
-
-        self.calibration_points[self.message_to_points[msg]][0] = x
-        self.calibration_points[self.message_to_points[msg]][1] = y
-
+    def capture(self, w, h, iris):
+        x, y = iris[0], iris[1]
+        self.calibration_points = {
+            "LeftTop": [x - w, y - h],
+            "RightTop": [x + w, y - h],
+            "LeftBottom": [x - w, y + h],
+            "RightBottom": [x + w, y + h]
+        }
 
 class UDPManager:
     """
@@ -122,7 +119,14 @@ class UDPManager:
             data, addr = self.receive_sock.recvfrom(256)
             message = data.decode('utf-8')
 
-            return message  # 메시지 수신 성공했지만 콜백 처리는 없음
+            return message  # 메시지 수신 성공
+        except OSError as e:
+            # 자원이 일시적으로 사용 불가능함 오류 처리
+            if e.errno == errno.EAGAIN or e.errno == errno.EWOULDBLOCK:
+                return ""  # 메시지 수신 실패 (정상)
+            else:
+                print(f"UDP 수신 오류: {e}")  # 진짜 오류만 출력
+                return ""
         except Exception as e:
             print(f"UDP 수신 오류: {e}")  # 오류 메시지 출력
             return ""
