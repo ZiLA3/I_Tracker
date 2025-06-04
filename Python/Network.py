@@ -24,14 +24,7 @@ class UDPState:
             "LeftBottom": [-1, -1],
             "RightBottom": [-1, -1]
         }
-        self.message_to_points = {
-            "1": "LeftTop",
-            "2": "RightTop",
-            "3": "LeftBottom",
-            "4": "RightBottom"
-        }
 
-        self.temp_array = np.empty((2, 0))
         self.screen_size = [-1, -1]
         self.pre_message = "0"
 

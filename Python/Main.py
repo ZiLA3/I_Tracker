@@ -24,7 +24,6 @@ class App:
         self.udp = Network.UDPManager(IP, SEND_PORT, RECEIVE_PORT)
         self.state = Network.UDPState()
 
-        self.debug_capture_int = 0
         print("Waiting Screen Size")
 
     def read_video(self):
@@ -53,7 +52,7 @@ class App:
 
     def capture_process(self, iris, shape):
         """
-        state 2번: 모니터의 끝점 4개를 바라보았을 때 좌표를 측정합니다.
+        state 2번: 모니터의 끝점 4개 좌표를 측정합니다.
         측정 이후 입력된 값을 기반으로 매퍼를 생성합니다.
         """
         capture_msg = self.udp.receive("captured")
@@ -102,8 +101,6 @@ class App:
         key = cv.waitKey(PROCESS_DELAY)
         if key == ord('q'):
             return False
-        elif key == ord('a'):
-            self.debug_capture_int += 1
         return True
 
     def close(self):

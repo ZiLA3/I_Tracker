@@ -24,7 +24,7 @@ class xyMapper:
 
         # 캘리브레이션 포인트 매핑 설정
         # 키: 카메라 공간 좌표 (홍채 위치), 값: 화면 공간 좌표
-        calibration_points = {
+        homography_points = {
             (xy_lt[0], xy_lt[1]): (0, xy_Screen[1]),               # 좌상단 모서리
             (xy_rt[0], xy_rt[1]): (xy_Screen[0], xy_Screen[1]),    # 우상단 모서리
             (xy_ld[0], xy_ld[1]): (0, 0),    # 좌하단 모서리
@@ -33,7 +33,7 @@ class xyMapper:
         
         # 호모그래피 행렬 초기화
         self.H = None
-        self.compute_homography(calibration_points)  # 호모그래피 행렬 계산
+        self.compute_homography(homography_points)  # 호모그래피 행렬 계산
 
     def compute_homography(self, calibration_points):
         """

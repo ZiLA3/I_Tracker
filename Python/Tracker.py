@@ -32,7 +32,6 @@ class Tracker:
 
     def set_image_size(self, img):
         self.height, self.width, _ = img.shape
-        print(self.height, self.width)
 
     def get_iris_pos(self, multi_face_landmarks):
         cx, cy = -1, -1
