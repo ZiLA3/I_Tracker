@@ -78,11 +78,6 @@ public class UdpManager : MonoBehaviour
                     print(data);
                 }
 
-                if (useMousePoint) 
-                {
-                    data = data.Replace("1,1#", $"{_mousePosition.x},{_mousePosition.y}#");
-                }
-
                 FaceLandmark.DataProcessing(data);
             }
             catch (SocketException)

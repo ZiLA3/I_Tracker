@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,12 +21,12 @@ public class MissionManager : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     public void SetCurrentInteractable(MissionObject interactable)
     {
-        if(currentInteractable != null)
+        if (currentInteractable != null)
             currentInteractable.SetInteractUIActive(false);
 
         currentInteractable = interactable;

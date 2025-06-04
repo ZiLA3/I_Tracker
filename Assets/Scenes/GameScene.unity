@@ -9236,9 +9236,7 @@ GameObject:
   - component: {fileID: 1782737307}
   - component: {fileID: 1782737311}
   - component: {fileID: 1782737308}
-  - component: {fileID: 1782737310}
   - component: {fileID: 1782737309}
-  - component: {fileID: 1782737312}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -9292,23 +9290,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3313444cb08d328489dca0fa16de1cc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1782737310
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1782737306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5cff9ad1fb5c91d449d1ff7219676c6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CurrentRSPType: 0
-  InputRSPType: 0
-  leverPullDown: 0
-  catchAction: 0
-  handTrackingOn: 1
 --- !u!114 &1782737311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9326,19 +9307,6 @@ MonoBehaviour:
   keyCountText: {fileID: 1203684125}
   timeToShowWinUI: 1
   timeToShowLoseUI: 1
---- !u!114 &1782737312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1782737306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94be7b24833832a4793324fbc21e9a5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  handCheck: {fileID: 1782737310}
 --- !u!1 &1791138643
 GameObject:
   m_ObjectHideFlags: 0
@@ -13645,7 +13613,6 @@ MonoBehaviour:
   sissorMat: {fileID: 2100000, guid: e6d1f75715ebd2140afe99372285d711, type: 2}
   paperMat: {fileID: 2100000, guid: a6e246c69bae88445a8fdcb7972b0c35, type: 2}
   timeToGenerateRSP: 3
-  rspTimer: 3
 --- !u!4 &4189374450331142953
 Transform:
   m_ObjectHideFlags: 0

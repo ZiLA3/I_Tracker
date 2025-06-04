@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Interact : MonoBehaviour
+public class GameStartUI : MonoBehaviour
 {
-    public void SceneChange()
+    public void LoadMainScene()
     {
         SceneManager.LoadScene(1);
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

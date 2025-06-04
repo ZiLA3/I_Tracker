@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum KeyType
@@ -20,7 +18,7 @@ public class MissionKey : MissionObject
 
     private void Start()
     {
-        anim = hand.GetComponent<Animator>();    
+        anim = hand.GetComponent<Animator>();
     }
 
     private void Update()
@@ -50,7 +48,7 @@ public class MissionKey : MissionObject
         SetHandActive(true);
 
         // 키 타입에 따라 카메라 전환
-        switch(keyType)
+        switch (keyType)
         {
             case KeyType.Black:
                 CameraManager.Instance.ToggleCamera(CameraType.blackKeyCamera);
@@ -61,7 +59,7 @@ public class MissionKey : MissionObject
             case KeyType.Blue:
                 CameraManager.Instance.ToggleCamera(CameraType.blueKeyCamera);
                 break;
-            }
+        }
     }
 
     public override void ResetToMainView()

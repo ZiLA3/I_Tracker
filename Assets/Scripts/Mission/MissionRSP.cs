@@ -1,22 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using TMPro;
 using UnityEngine;
 
 public enum RSPType
 {
-    Rock,
-    Sissor,
-    Paper
+    Paper = 0,
+    Rock = 1,
+    Sissor = 2
 }
 
 public class MissionRSP : MissionObject
 {
     [Header("RSP Mission Objects")]
     [SerializeField] GameObject timeText;
- 
+
     [Header("Hand Materials")]
     [SerializeField] MeshRenderer handPictureRenderer;
     [Space]
@@ -27,6 +23,8 @@ public class MissionRSP : MissionObject
 
     [Header("RSP Mission Settings")]
     private RSPType missionRSPType;
+    private RSPType currentPlayerRspType;
+    private RSPType beforePlayerRSPType;
     [SerializeField] float timeToGenerateRSP;
     float rspTimer = 0f;
 
@@ -43,7 +41,7 @@ public class MissionRSP : MissionObject
         if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
             return;
 
-        if(triggered)
+        if (triggered)
             return;
 
         if (Input.GetMouseButtonDown(1))
@@ -51,13 +49,14 @@ public class MissionRSP : MissionObject
 
         rspTimer -= Time.deltaTime;
 
-        if (timeText.activeSelf) 
+        if (timeText.activeSelf)
             timeText.GetComponent<TextMeshProUGUI>().text = rspTimer.ToString("F1");
 
-        GenerateRSP();
+        GeneratePlayerRSP();
+        GenerateMissionRSP();
     }
 
-    private void GenerateRSP()
+    private void GenerateMissionRSP()
     {
         if (rspTimer <= 0)
         {
@@ -75,8 +74,8 @@ public class MissionRSP : MissionObject
                 case RSPType.Sissor:
                     handPictureRenderer.sharedMaterial = sissorMat;
                     break;
-                default:
-                    handPictureRenderer.sharedMaterial = defaultMat; // 기본 재질로 설정
+                case RSPType.Paper:
+                    handPictureRenderer.sharedMaterial = paperMat; // 기본 재질로 설정
                     break;
             }
 
@@ -86,46 +85,74 @@ public class MissionRSP : MissionObject
 
     private void CheckRSP()
     {
-        RSPType playerRSPType = RSPType.Paper;
-
-        switch (FaceLandmark.HandFolds) 
-        {
-            case 15: // 손가락이 모두 펴져 있을 때
-                playerRSPType = RSPType.Rock;
-                anim.SetBool("Rock", true);
-                break;
-            case 3: // 엄지와 검지가 접혀 있을 때
-                playerRSPType = RSPType.Sissor;
-                anim.SetBool("Sissor", true);
-                break;
-            case 0: // 엄지와 검지를 제외한 모든 손가락이 접혀 있을 때
-                playerRSPType = RSPType.Paper;
-                anim.SetBool("Paper", true);
-                break;
-        }
-
-        if (playerRSPType == RSPType.Rock && missionRSPType == RSPType.Sissor)
+        if (currentPlayerRspType == RSPType.Rock && missionRSPType == RSPType.Sissor)
             SucceedSetting();
-        else if (playerRSPType == RSPType.Sissor && missionRSPType == RSPType.Paper)
+        else if (currentPlayerRspType == RSPType.Sissor && missionRSPType == RSPType.Paper)
             SucceedSetting();
-        else if (playerRSPType == RSPType.Paper && missionRSPType == RSPType.Rock)
+        else if (currentPlayerRspType == RSPType.Paper && missionRSPType == RSPType.Rock)
             SucceedSetting();
         else
         {
+            timeText.GetComponent<TextMeshProUGUI>().text = "Failed!!";
             FailSetting();
         }
+    }
+
+    private void GeneratePlayerRSP()
+    {
+        switch (FaceLandmark.HandFolds)
+        {
+            case 15:
+                currentPlayerRspType = RSPType.Rock;
+                break;
+            case 12: 
+                currentPlayerRspType = RSPType.Sissor;
+                break;
+            case 0: 
+                currentPlayerRspType = RSPType.Paper;
+                break;
+        }
+
+        ChangeAnimation(currentPlayerRspType);
     }
 
     private void SucceedSetting()
     {
         triggered = true; // RSP 성공 시 미션 중지
-        timeText.GetComponent<TextMeshProUGUI>().text = "Succeded!";
+        timeText.GetComponent<TextMeshProUGUI>().text = "Succeeded!!";
         Invoke("SucceedMission", 1f);
     }
     private void FailSetting()
     {
         triggered = true; // 마우스 오른쪽 버튼 클릭 시 미션 중지
+
+        ChangeAnimation(RSPType.Paper);
+        currentPlayerRspType = RSPType.Paper; // 초기값 설정
+
         Invoke(nameof(ResetToMainView), 1f); // 실패 시 메인 뷰로 돌아가기
+    }
+
+    private void ChangeAnimation(RSPType currentType)
+    {
+        if (currentType != beforePlayerRSPType)
+            beforePlayerRSPType = currentType; // 이전 RSP 타입 업데이트
+
+        anim.SetBool("Paper", false);
+        anim.SetBool("Rock", false);
+        anim.SetBool("Sissor", false);
+
+        switch (currentType)
+        {
+            case RSPType.Rock:
+                anim.SetBool("Rock", true);
+                break;
+            case RSPType.Paper:
+                anim.SetBool("Paper", true);
+                break;
+            case RSPType.Sissor:
+                anim.SetBool("Sissor", true);
+                break;
+        }
     }
 
     public override void Interact()
@@ -138,6 +165,9 @@ public class MissionRSP : MissionObject
 
         timeText.SetActive(true);
         rspTimer = timeToGenerateRSP; // RSP 타이머 초기화
+
+        currentPlayerRspType = RSPType.Paper; // 초기값 설정
+        beforePlayerRSPType = RSPType.Paper; // 초기값 설정
 
         CameraManager.Instance.ToggleCamera(CameraType.rspCamera);
     }

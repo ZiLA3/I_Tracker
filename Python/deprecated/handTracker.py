@@ -22,9 +22,6 @@ HANDS = MP_HANDS.Hands(
 MP_DRAW = mp.solutions.drawing_utils
 
 class Tracker:
-    """
-    눈 및 손 위치 추적 클래스
-    """
     def __init__(self):
         self.face_mesh = FACE_MESH
         self.hands = HANDS
@@ -32,7 +29,6 @@ class Tracker:
 
     def set_image_size(self, img):
         self.height, self.width, _ = img.shape
-        print(self.height, self.width)
 
     def get_iris_pos(self, multi_face_landmarks):
         cx, cy = -1, -1
@@ -41,6 +37,7 @@ class Tracker:
 
             left_iris = face_landmarks.landmark[LEFT_EYE_MARK]  # 왼쪽 홍채
             clx, cly = (int(left_iris.x * w), int(left_iris.y * h))  # 왼쪽 홍채 x, y좌표 (픽셀)
+              # 왼쪽 홍채 y좌표 (픽셀)
 
             right_iris = face_landmarks.landmark[RIGHT_EYE_MARK]  # 오른쪽 홍채
             crx, cry = ((right_iris.x * w), (right_iris.y * h))  # 오른쪽 홍채 x, y좌표 (픽셀)
@@ -56,12 +53,13 @@ class Tracker:
         for hand_landmarks in multi_hand_landmarks[0].landmark:
             x, y, z= (int(hand_landmarks.x * w), int(hand_landmarks.y * h), int(hand_landmarks.z * 100)) # z는 정규화된 상대 깊이 값
 
-            hand_position.append([x, h- y, z])
+            hand_position.append([x, h - y, z])
 
         return hand_position
 
     def debug(self, iris_pos, hand_pos):
-        print(f"{iris_pos}##{hand_pos}")
+        # print(f"{iris_pos}##{hand_pos}")
+        pass
 
     def process(self, image_bgr, debug=False):
         if self.height == 0 or self.width == 0:
@@ -87,8 +85,11 @@ class Tracker:
 
         return iris_pos, hand_pos
 
+def get_uclid_distance(pos1, pos2):
+    x = (pos1[0] - pos2[0])**2
+    y = (pos1[1] - pos2[1])**2
+    return x+y
 
-# 테스트 코드
 if __name__ == "__main__":
     tracker = Tracker()
     cap = cv.VideoCapture(0)
@@ -98,11 +99,22 @@ if __name__ == "__main__":
         print("Error: VideoCapture read failed.")
         exit()
     tracker.set_image_size(image)
-
+    pre_dis = 0
     while True:
         success, image = cap.read()
-        print(image.shape)
-        tracker.process(image)
+        iris, hand_pos = tracker.process(image, True)
+        destr = ""
+        if hand_pos[0][0] > 0:
+            print(hand_pos[0], hand_pos[8])
+            dis = get_uclid_distance(hand_pos[0], hand_pos[8])
+            dis2 = get_uclid_distance(hand_pos[0], hand_pos[6])
+            if dis > dis2:
+                destr = "not fold"
+            else:
+                destr = "fold"
+
+
+        cv.putText(image, destr, (50,50), cv.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv.LINE_AA)
         cv.imshow("Tracker", image)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break

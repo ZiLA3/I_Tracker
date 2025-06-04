@@ -1,17 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EscapeDoor : MissionObject
 {
     [Header("Door Setting")]
-    [SerializeField] GameObject door; 
+    [SerializeField] GameObject door;
     [Space]
     [SerializeField] Vector3 doorLastEulerAngle;
     [SerializeField] float rotateSpeed = 5f;
     [SerializeField] float delayTimeToRotate = .3f;
 
-    bool isDoorOpen = false; 
+    bool isDoorOpen = false;
     bool succeeded = false;
 
     Animator anim;

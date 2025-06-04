@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MissionLever : MissionObject
@@ -41,9 +39,9 @@ public class MissionLever : MissionObject
             Invoke(nameof(SetLeverPulledTrue), delayTimeToRotate); // 레버 당김 상태를 true로 설정
 
             succeeded = true;
-            anim.SetTrigger("PullLever"); // 레버 당김 애니메이션 트리거
+            anim.SetTrigger("Pull"); // 레버 당김 애니메이션 트리거
             Invoke("SucceedMission", 1.2f);
-        }       
+        }
     }
 
     private void SetLeverPulledTrue() => isLeverPulled = true;
@@ -65,7 +63,7 @@ public class MissionLever : MissionObject
 
         Player.Instance.Mission.SetMissionActive(false);
 
-        if(inMissionUI != null)
+        if (inMissionUI != null)
             inMissionUI.SetActive(false);
 
         SetHandActive(false);

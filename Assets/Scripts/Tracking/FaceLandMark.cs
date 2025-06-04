@@ -37,12 +37,16 @@ public static class FaceLandmark
 
         if (HasHandPoint)
         {
-            HandFolds = 0; // 0 : paper , rock = 15, sissor = 3
+            HandFolds = 0; // 0 : paper , rock = 15, sissor = 12
 
             var binaryarr = new int[] { 1, 2, 4, 8 };
 
             for (i = 0; i < 4; i++)
                 HandFolds += binaryarr[i] * IsFingerFold(i);
+        }
+        else 
+        {
+            HandFolds = 0;
         }
     }
 

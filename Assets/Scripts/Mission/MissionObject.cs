@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MissionObject : MonoBehaviour, IInteractable
@@ -12,7 +10,7 @@ public class MissionObject : MonoBehaviour, IInteractable
 
     public virtual void Interact()
     {
-        if (interactUI.activeSelf) 
+        if (interactUI.activeSelf)
         {
             if (interactUI != null)
                 interactUI.SetActive(false);
@@ -31,22 +29,22 @@ public class MissionObject : MonoBehaviour, IInteractable
 
     public void ShowClearKey()
     {
-        if(clearKey != null)
+        if (clearKey != null)
             clearKey.SetActive(true);
     }
 
     public virtual void SetHandActive(bool active)
     {
-        if(hand != null)
+        if (hand != null)
             hand.SetActive(active);
     }
 
-    public virtual void ResetToMainView() 
+    public virtual void ResetToMainView()
     {
         CameraManager.Instance.ToggleCamera(CameraType.mainCamera);
     }
 
-    public virtual void SucceedMission() 
+    public virtual void SucceedMission()
     {
         ShowClearKey();
         ResetToMainView();
