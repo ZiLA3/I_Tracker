@@ -10,8 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject loseUI; // 패배 UI
     [SerializeField] GameObject escUI;
     [SerializeField] TextMeshProUGUI keyCountText; // 키 개수 UI (추가된 부분)
-    [SerializeField] float timeToShowWinUI = 2f; // 승리 UI 표시 시간
-    [SerializeField] float timeToShowLoseUI = 2f; // 패배 UI 표시 시간s
+    [SerializeField] float timeToShowUI = 2f; // 승리 UI 표시 시간
     float timer = 0f;
 
     public event Action KeyCountChanged; // 키 개수 변경 이벤트
@@ -71,7 +70,7 @@ public class GameManager : MonoBehaviour
         if ((IsGameWin || IsGameOver) && !triggered0)
         {
             triggered0 = true;
-            timer = timeToShowWinUI; // 승리 UI 표시 시간 초기화
+            timer = timeToShowUI; // 승리 UI 표시 시간 초기화
         }
 
         if (triggered0 && !triggered1)
