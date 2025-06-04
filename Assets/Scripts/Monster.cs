@@ -40,13 +40,7 @@ public class Monster : MonoBehaviour
 
     private void Move()
     {
-        if (GameManager.Instance.IsGameWin) 
-        {
-            anim.speed = 0;
-            return;
-        }
-
-        if (GameManager.Instance.IsGameOver)
+        if (GameManager.Instance.StopScipt())
             return;
 
         if (GameManager.Instance.Mission.IsInMission || GameManager.Instance.Mission.LightTwinkling || !GameManager.Instance.Eye.EnemyOnSight)
@@ -82,4 +76,13 @@ public class Monster : MonoBehaviour
         anim.SetBool("Move", false);
         anim.SetBool("Attack", true);
     }
+
+    public void ActiveAnim(bool active) 
+    {
+        if (active)
+            anim.speed = 1;
+        else
+            anim.speed = 0;
+    }
+
 }

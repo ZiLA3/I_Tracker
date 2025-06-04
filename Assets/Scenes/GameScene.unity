@@ -11246,8 +11246,8 @@ MonoBehaviour:
   loseUI: {fileID: 425696707}
   escUI: {fileID: 1241684522}
   keyCountText: {fileID: 1203684125}
-  timeToShowWinUI: 1
-  timeToShowLoseUI: 1
+  timeToShowUI: 2
+  monster: {fileID: 6083277470003304228}
 --- !u!1 &1791138643
 GameObject:
   m_ObjectHideFlags: 0
@@ -16886,7 +16886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a5f5733a7ca5e4c85d058cd8957cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.2
+  moveSpeed: 0.25
 --- !u!136 &6083277470003304229
 CapsuleCollider:
   m_ObjectHideFlags: 0

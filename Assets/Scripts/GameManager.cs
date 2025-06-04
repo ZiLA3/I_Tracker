@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject escUI;
     [SerializeField] TextMeshProUGUI keyCountText; // 키 개수 UI (추가된 부분)
     [SerializeField] float timeToShowUI = 2f; // 승리 UI 표시 시간
+
+    [Header("Monster")]
+    [SerializeField] Monster monster;
+
     float timer = 0f;
 
     public event Action KeyCountChanged; // 키 개수 변경 이벤트
@@ -21,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     public bool IsGameOver { get; private set; } = false; // 게임 오버 상태
     public bool IsGameWin { get; private set; } = false; // 게임 승리 상태
+    public bool GameStopped { get; private set; } = false; // 게임 일시 정지 상태
 
     private bool triggered0 = false; // 트리거 상태
     private bool triggered1 = false; // 트리거 상태
@@ -93,6 +98,9 @@ public class GameManager : MonoBehaviour
     public void Resume()
     {
         escUI.SetActive(false);
+
+        monster.ActiveAnim(true);
+
         Time.timeScale = 1f; // 게임 재개
     }
 
@@ -108,12 +116,23 @@ public class GameManager : MonoBehaviour
 
     private void Stop()
     {
+        GameStopped = true; // 게임 일시 정지 상태 설정
+
+        monster.ActiveAnim(false);
+
         escUI.SetActive(true);
+
         Time.timeScale = 0f; // 게임 일시 정지
     }
 
+    public bool StopScipt() => IsGameWin || IsGameOver || GameStopped;
 
-    public void SetGameWinTrue() => IsGameWin = true; // 게임 승리 상태 설정
+    public void SetGameWinTrue() 
+    {
+        IsGameWin = true; // 게임 승리 상태 설정
+        monster.ActiveAnim(false); // 몬스터 애니메이션 비활성화
+    }
+
     public void SetGameOverTrue() => IsGameOver = true; // 게임 오버 상태 설정
 
 }

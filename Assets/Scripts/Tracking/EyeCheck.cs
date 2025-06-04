@@ -35,7 +35,7 @@ public class EyeCheck : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.IsGameWin || GameManager.Instance.IsGameOver)
+        if (GameManager.Instance.StopScipt())
             return;
 
         GenerateEyeRay(); // 선호출
