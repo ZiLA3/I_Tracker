@@ -5,7 +5,7 @@ public static class FaceLandmark
     public static Vector2 EyePoint;
 
     public static readonly Vector3[] HandPoints = new Vector3[21];
-    public static readonly bool[] HandFolds = new bool[] { false, false, false, false };
+    public static int HandFolds = 0;
 
     public static bool HasEyePointLeft => EyePoint != -Vector2.one;
     public static bool HasHandPoint => HandPoints[0] != -Vector3.one;
@@ -37,8 +37,10 @@ public static class FaceLandmark
 
         if (HasHandPoint)
         {
+            HandFolds = 0; // Reset HandFolds before calculating
+            var binaryarr = new int[] { 1, 2, 4, 8 };
             for (i = 0; i < 4; i++)
-                HandFolds[i] = IsFingerFold(i);
+                HandFolds += binaryarr[i] * IsFingerFold(i);
         }
     }
 
@@ -51,7 +53,7 @@ public static class FaceLandmark
         return distanceXY;
     }
 
-    private static bool IsFingerFold(int fingerIndex)
+    private static int IsFingerFold(int fingerIndex)
     {
         var startTip = FingerIndexes[fingerIndex, 1];
         var startDis = GetDistanceXY(HandPoints[startTip], HandPoints[0]);
@@ -59,7 +61,7 @@ public static class FaceLandmark
         var endTip = FingerIndexes[fingerIndex, 0];
         var endDis = GetDistanceXY(HandPoints[endTip], HandPoints[0]);
 
-        return startDis > endDis;
+        return (startDis > endDis) ? 1 : 0;
     }
     
     public static string ToStr()

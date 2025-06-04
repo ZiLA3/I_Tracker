@@ -12,33 +12,45 @@ public class HandChecker : MonoBehaviour
         new[]{ false, false, false, false } // paper, catch off
     };
 
+    public enum style
+    {
+        Rock = 15, // 1111
+        Scissors = 3, // 1100
+        Paper = 0 // 0000 
+    }
+
     private void Update()
     {
-        Debug.Log($"{FaceLandmark.HandFolds[0]}, {FaceLandmark.HandFolds[1]}, {FaceLandmark.HandFolds[2]}, {FaceLandmark.HandFolds[3]}");
-        var i = 0;
-        for (i = 0; i < 3; i++)
-        {
-            var handFolds = FaceLandmark.HandFolds;
-            if (FoldStyle[i].SequenceEqual(handFolds))
-                break;
-        }
+        if(handCheck.handTrackingOn)
+            return;
 
-        switch (handCheck.HandType)
-        {
-            case HandActionType.None:
-                break;
-            case HandActionType.RSP:
-                handCheck.SetInputRSPType(i);
-                break;
-            case HandActionType.PullDown:
-                handCheck.leverPullDown = i == 0;
-                break;
-            case HandActionType.Catch:
-                handCheck.catchAction = i == 0;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        //Debug.Log($"{FaceLandmark.HandFolds[0]}, {FaceLandmark.HandFolds[1]}, {FaceLandmark.HandFolds[2]}, {FaceLandmark.HandFolds[3]}");
+        //var i = 0;
+        //for (i = 0; i < 3; i++)
+        //{
+        //    var handFolds = FaceLandmark.HandFolds;
+        //    if (handFolds == style.Rock)
+        //        break;
+        //}
+
+        //switch (handCheck.HandType)
+        //{
+        //    case HandActionType.None:
+        //        break;
+        //    case HandActionType.RSP:
+        //        handCheck.SetInputRSPType(i);
+        //        break;
+        //    case HandActionType.PullDown:
+        //        if(i == 0)
+        //            handCheck.SetLeverPulldown();
+        //        break;
+        //    case HandActionType.Catch:
+        //        if (i == 0)
+        //            handCheck.SetCatch();
+        //        break;
+        //    default:
+        //        throw new ArgumentOutOfRangeException();
+        //}
         
     }
     

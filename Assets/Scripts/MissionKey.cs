@@ -27,7 +27,7 @@ public class MissionKey : MissionObject
         if (Input.GetMouseButtonDown(1))
             ResetToMainView();
 
-        if (Player.Instance.Hand.catchAction)
+        if (FaceLandmark.HandFolds == 15)
         {
             succeeded = true; // 키 잡기 동작이 트리거됨
             Invoke("SucceedMission", delayTime); // 키를 잡았을 때 미션 성공

@@ -21,6 +21,8 @@ public class UdpManager : MonoBehaviour
     [Header("Debug")]
     public bool useMousePoint = true;
 
+    public readonly object _lockObj = new object();
+
     private Thread _receiveThread;
     private UdpClient _receiveClient;
     private UdpClient _sendClient;
@@ -74,6 +76,11 @@ public class UdpManager : MonoBehaviour
                 if (printDebug)
                 {
                     print(data);
+                }
+
+                if (useMousePoint) 
+                {
+                    data = data.Replace("1,1#", $"{_mousePosition.x},{_mousePosition.y}#");
                 }
 
                 FaceLandmark.DataProcessing(data);

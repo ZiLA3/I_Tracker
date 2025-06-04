@@ -32,6 +32,7 @@ class Tracker:
 
     def set_image_size(self, img):
         self.height, self.width, _ = img.shape
+        print(self.height, self.width)
 
     def get_iris_pos(self, multi_face_landmarks):
         cx, cy = -1, -1
@@ -45,7 +46,7 @@ class Tracker:
             crx, cry = ((right_iris.x * w), (right_iris.y * h))  # 오른쪽 홍채 x, y좌표 (픽셀)
 
             # 양쪽 홍채 중심의 평균 위치 계산
-            cx, cy = ((clx + crx) // 2, (cly + cry) // 2)  # 중심 x, y좌표
+            cx, cy = ((clx + crx) // 2, h - (cly + cry) // 2)  # 중심 x, y좌표
 
         return [cx, cy]
 
@@ -55,7 +56,7 @@ class Tracker:
         for hand_landmarks in multi_hand_landmarks[0].landmark:
             x, y, z= (int(hand_landmarks.x * w), int(hand_landmarks.y * h), int(hand_landmarks.z * 100)) # z는 정규화된 상대 깊이 값
 
-            hand_position.append([x, h - y, z])
+            hand_position.append([x, h- y, z])
 
         return hand_position
 
@@ -100,7 +101,8 @@ if __name__ == "__main__":
 
     while True:
         success, image = cap.read()
-        tracker.process(image, True)
+        print(image.shape)
+        tracker.process(image)
         cv.imshow("Tracker", image)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break

@@ -29,7 +29,7 @@ public class MissionLever : MissionObject
         if (Input.GetMouseButtonDown(1))
             ResetToMainView();
 
-        if (Player.Instance.Hand.leverPullDown)
+        if (FaceLandmark.HandFolds == 15)
         {
             Invoke(nameof(SetLeverPulledTrue), delayTimeToRotate); // 레버 당김 상태를 true로 설정
 

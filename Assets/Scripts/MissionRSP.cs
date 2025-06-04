@@ -59,16 +59,19 @@ public class MissionRSP : MissionObject
 
             missionRSPType = (RSPType)randomValue;
 
-            switch (missionRSPType)
+            switch (FaceLandmark.HandFolds)
             {
-                case RSPType.Rock:
+                case 15:
                     handPictureRenderer.sharedMaterial = rockMat;
+                    print("rock");
                     break;
-                case RSPType.Sissor:
+                case 3:
                     handPictureRenderer.sharedMaterial = sissorMat;
+                    print("1");
                     break;
-                case RSPType.Paper:
+                case 0:
                     handPictureRenderer.sharedMaterial = paperMat;
+                    print("2");
                     break;
             }
 

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class EyeCheck : MonoBehaviour
 {
+    [SerializeField] UdpManager udpManager; // UDP 매니저
+
     [Header("Eye Point")]
     [SerializeField] Vector3 eyePointOffset = Vector3.zero; // 눈 위치 오프셋
     [SerializeField] Transform eye;
@@ -19,6 +21,7 @@ public class EyeCheck : MonoBehaviour
     [SerializeField] float zoomInFOV = 30f;
     float defaultFOV;
     bool isZoomedIn = false;
+    
 
     // LayerMask
     LayerMask interactableLayer;

@@ -148,15 +148,21 @@ public class HandCheck : MonoBehaviour
         }
     }
 
-    private void SetLeverPulldown()
+    public void SetLeverPulldown()
     {
+        if (triggered)
+            return;
+
         leverPullDown = true;
 
         timer = delayTime;
     }
 
-    private void SetCatch()
+    public void SetCatch()
     {
+        if (triggered)
+            return;
+
         catchAction = true;
 
         timer = delayTime;
