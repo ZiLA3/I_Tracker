@@ -80,6 +80,5 @@ class xyMapper:
         # 결과 좌표를 화면 크기 내로 제한 (0 ~ 화면 크기)
         x = np.clip(screen_x, 0, self.xy_Screen[0])  # x 좌표 클리핑
         y = np.clip(screen_y, 0, self.xy_Screen[1])  # y 좌표 클리핑
-        y = 1080 - y  # y 좌표는 화면의 아래쪽이 0이므로 반전 처리
-        
+
         return (x, y)  # 최종 매핑된 화면 좌표 반환
