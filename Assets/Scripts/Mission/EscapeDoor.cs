@@ -12,7 +12,14 @@ public class EscapeDoor : MissionObject
     [SerializeField] float delayTimeToRotate = .3f;
 
     bool isDoorOpen = false; 
-    bool succeeded = false; 
+    bool succeeded = false;
+
+    Animator anim;
+
+    private void Start()
+    {
+        anim = hand.GetComponent<Animator>();
+    }
 
     private void Update()
     {
@@ -28,10 +35,11 @@ public class EscapeDoor : MissionObject
         if (Input.GetMouseButtonDown(1))
             ResetToMainView();
 
-        if (Player.Instance.Hand.catchAction && Player.Instance.Mission.PlayerKeyCount == 3)
+        if (FaceLandmark.HandFolds == 15 && Player.Instance.Mission.PlayerKeyCount == 3)
         {
-
             Invoke(nameof(SetDoorOpen), delayTimeToRotate); // 레버 당김 상태를 true로 설정
+
+            anim.SetTrigger("Catch");
 
             succeeded = true;
             inMissionUI.SetActive(false); // 미션 UI 비활성화
@@ -46,11 +54,9 @@ public class EscapeDoor : MissionObject
     {
         base.Interact();
 
-        SetHandActive(true);
+        Player.Instance.Mission.SetMissionActive(true);
 
-        Player.Instance.Hand.SetHandTrackingActive(true); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // RSP 미션 타입 설정
-        Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
+        SetHandActive(true);
 
         CameraManager.Instance.ToggleCamera(CameraType.doorCamera);
     }
@@ -60,10 +66,6 @@ public class EscapeDoor : MissionObject
         base.ResetToMainView();
 
         Player.Instance.Mission.SetMissionActive(false);
-
-        Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
-        Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
 
         if (inMissionUI != null)
             inMissionUI.SetActive(false);

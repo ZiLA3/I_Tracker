@@ -16,6 +16,13 @@ public class MissionKey : MissionObject
 
     bool succeeded = false; // 성공 여부 -> 성공했을 때 오작동을 막기 위한 변수
 
+    Animator anim;
+
+    private void Start()
+    {
+        anim = hand.GetComponent<Animator>();    
+    }
+
     private void Update()
     {
         if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
@@ -30,9 +37,10 @@ public class MissionKey : MissionObject
         if (FaceLandmark.HandFolds == 15)
         {
             succeeded = true; // 키 잡기 동작이 트리거됨
+
+            anim.SetTrigger("Catch");
             Invoke("SucceedMission", delayTime); // 키를 잡았을 때 미션 성공
         }
-
     }
 
     public override void Interact()
@@ -40,10 +48,6 @@ public class MissionKey : MissionObject
         base.Interact();
 
         SetHandActive(true);
-
-        Player.Instance.Hand.SetHandTrackingActive(true); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.Catch); // RSP 미션 타입 설정
-        Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
 
         // 키 타입에 따라 카메라 전환
         switch(keyType)
@@ -63,10 +67,6 @@ public class MissionKey : MissionObject
     public override void ResetToMainView()
     {
         Player.Instance.Mission.SetMissionActive(false);
-
-        Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
-        Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
 
         if (inMissionUI != null)
             inMissionUI.SetActive(false);
