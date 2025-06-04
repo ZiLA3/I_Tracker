@@ -5,6 +5,13 @@ using System.Threading;
 using TMPro;
 using UnityEngine;
 
+public enum RSPType
+{
+    Rock,
+    Sissor,
+    Paper
+}
+
 public class MissionRSP : MissionObject
 {
     [Header("RSP Mission Objects")]
@@ -20,14 +27,15 @@ public class MissionRSP : MissionObject
 
     [Header("RSP Mission Settings")]
     private RSPType missionRSPType;
-    [SerializeField] float timeToGenerateRSP = 2f;
-    [SerializeField] float rspTimer = 0f;
+    [SerializeField] float timeToGenerateRSP;
+    float rspTimer = 0f;
 
+    Animator anim;
     bool triggered; // 멈춤 여부 -> 메인 뷰로 돌아가거나 성공했을 떄 오작동을 막기 위한 변수
 
     private void Start()
     {
-        rspTimer = timeToGenerateRSP;
+        anim = hand.GetComponent<Animator>();
     }
 
     private void Update()
@@ -59,19 +67,16 @@ public class MissionRSP : MissionObject
 
             missionRSPType = (RSPType)randomValue;
 
-            switch (FaceLandmark.HandFolds)
+            switch (missionRSPType)
             {
-                case 15:
+                case RSPType.Rock:
                     handPictureRenderer.sharedMaterial = rockMat;
-                    print("rock");
                     break;
-                case 3:
+                case RSPType.Sissor:
                     handPictureRenderer.sharedMaterial = sissorMat;
-                    print("1");
                     break;
-                case 0:
-                    handPictureRenderer.sharedMaterial = paperMat;
-                    print("2");
+                default:
+                    handPictureRenderer.sharedMaterial = defaultMat; // 기본 재질로 설정
                     break;
             }
 
@@ -81,23 +86,34 @@ public class MissionRSP : MissionObject
 
     private void CheckRSP()
     {
-        Player.Instance.Hand.SetRSPCaptureActive(true); // RSP 캡처 시작
+        RSPType playerRSPType = RSPType.Paper;
 
-        RSPType type = Player.Instance.Hand.CurrentRSPType;
+        switch (FaceLandmark.HandFolds) 
+        {
+            case 15: // 손가락이 모두 펴져 있을 때
+                playerRSPType = RSPType.Rock;
+                anim.SetBool("Rock", true);
+                break;
+            case 3: // 엄지와 검지가 접혀 있을 때
+                playerRSPType = RSPType.Sissor;
+                anim.SetBool("Sissor", true);
+                break;
+            case 0: // 엄지와 검지를 제외한 모든 손가락이 접혀 있을 때
+                playerRSPType = RSPType.Paper;
+                anim.SetBool("Paper", true);
+                break;
+        }
 
-        if (type == RSPType.Rock && missionRSPType == RSPType.Sissor)
+        if (playerRSPType == RSPType.Rock && missionRSPType == RSPType.Sissor)
             SucceedSetting();
-        else if (type == RSPType.Sissor && missionRSPType == RSPType.Paper)
+        else if (playerRSPType == RSPType.Sissor && missionRSPType == RSPType.Paper)
             SucceedSetting();
-        else if (type == RSPType.Paper && missionRSPType == RSPType.Rock)
+        else if (playerRSPType == RSPType.Paper && missionRSPType == RSPType.Rock)
             SucceedSetting();
         else
         {
             FailSetting();
-            timeText.GetComponent<TextMeshProUGUI>().text = "Failed!";
         }
-
-        Player.Instance.Hand.SetRSPCaptureActive(false); // RSP 캡처 종료
     }
 
     private void SucceedSetting()
@@ -109,7 +125,6 @@ public class MissionRSP : MissionObject
     private void FailSetting()
     {
         triggered = true; // 마우스 오른쪽 버튼 클릭 시 미션 중지
-        Player.Instance.Hand.SetDefaultRSPState(); // RSP 상태 초기화
         Invoke(nameof(ResetToMainView), 1f); // 실패 시 메인 뷰로 돌아가기
     }
 
@@ -121,11 +136,7 @@ public class MissionRSP : MissionObject
 
         SetHandActive(true); // 손 활성화
 
-        Player.Instance.Hand.SetHandTrackingActive(true); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.RSP); // RSP 미션 타입 설정
-        Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
-
-        timeText?.SetActive(true);
+        timeText.SetActive(true);
         rspTimer = timeToGenerateRSP; // RSP 타이머 초기화
 
         CameraManager.Instance.ToggleCamera(CameraType.rspCamera);
@@ -136,10 +147,6 @@ public class MissionRSP : MissionObject
         base.ResetToMainView();
 
         Player.Instance.Mission.SetMissionActive(false);
-
-        Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
-        Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
 
         inMissionUI.SetActive(false);
         timeText.SetActive(false);

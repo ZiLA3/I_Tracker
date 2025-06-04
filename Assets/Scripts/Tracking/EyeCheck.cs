@@ -17,7 +17,7 @@ public class EyeCheck : MonoBehaviour
     Vector3 eyePoint;
     Ray ray;
 
-    [Header("Cmaera Zoom in")]
+    [Header("Camera Zoom in")]
     [SerializeField] float zoomInFOV = 30f;
     float defaultFOV;
     bool isZoomedIn = false;

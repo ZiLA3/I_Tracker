@@ -11,8 +11,15 @@ public class MissionLever : MissionObject
     [SerializeField] float rotateSpeed = 5f; // 레버 회전 속도
     [SerializeField] float delayTimeToRotate = .5f; // 레버 당김 딜레이 시간
 
+    Animator anim;
     bool isLeverPulled = false; // 레버가 당겨졌는지 여부
     bool succeeded = false; // 성공 여부 -> 성공했을 때 오작동을 막기 위한 변수
+
+    private void Start()
+    {
+        anim = hand.GetComponent<Animator>();
+    }
+
     private void Update()
     {
         if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
@@ -34,6 +41,7 @@ public class MissionLever : MissionObject
             Invoke(nameof(SetLeverPulledTrue), delayTimeToRotate); // 레버 당김 상태를 true로 설정
 
             succeeded = true;
+            anim.SetTrigger("PullLever"); // 레버 당김 애니메이션 트리거
             Invoke("SucceedMission", 1.2f);
         }       
     }
@@ -44,11 +52,9 @@ public class MissionLever : MissionObject
     {
         base.Interact();
 
-        SetHandActive(true);
+        Player.Instance.Mission.SetMissionActive(true);
 
-        Player.Instance.Hand.SetHandTrackingActive(true); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.PullDown); // RSP 미션 타입 설정
-        Player.Instance.Hand.SetAnimator(hand.GetComponent<Animator>());
+        SetHandActive(true);
 
         CameraManager.Instance.ToggleCamera(CameraType.leverCamera);
     }
@@ -58,10 +64,6 @@ public class MissionLever : MissionObject
         base.ResetToMainView();
 
         Player.Instance.Mission.SetMissionActive(false);
-
-        Player.Instance.Hand.SetHandTrackingActive(false); // 손 추적 활성화
-        Player.Instance.Hand.SetHandMissionType(HandActionType.None); // 손 미션 타입 초기화
-        Player.Instance.Hand.SetAnimator(null); // 애니메이터 초기화
 
         if(inMissionUI != null)
             inMissionUI.SetActive(false);

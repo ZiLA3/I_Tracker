@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     public event Action KeyCountChanged; // 키 개수 변경 이벤트
 
     public static Player Instance { get; private set; }
-    public HandCheck Hand { get; private set; }
     public EyeCheck Eye { get; private set; }
     public MissionManager Mission { get; private set; }
 
@@ -35,7 +34,6 @@ public class Player : MonoBehaviour
         {
             Instance = this;
 
-            Hand = GetComponent<HandCheck>();
             Eye = GetComponent<EyeCheck>();
             Mission = GetComponent<MissionManager>();
         }
