@@ -25,10 +25,10 @@ class xyMapper:
         # 캘리브레이션 포인트 매핑 설정
         # 키: 카메라 공간 좌표 (홍채 위치), 값: 화면 공간 좌표
         calibration_points = {
-            (0, 0): (0, xy_Screen[1]),               # 좌상단 모서리
-            (640, 0): (xy_Screen[0], xy_Screen[1]),    # 우상단 모서리
-            (0, 480): (0, 0),    # 좌하단 모서리
-            (640, 480): (xy_Screen[0], 0) # 우하단 모서리
+            (xy_lt[0], xy_lt[1]): (0, xy_Screen[1]),               # 좌상단 모서리
+            (xy_rt[0], xy_rt[1]): (xy_Screen[0], xy_Screen[1]),    # 우상단 모서리
+            (xy_ld[0], xy_ld[1]): (0, 0),    # 좌하단 모서리
+            (xy_rd[0], xy_rd[1]): (xy_Screen[0], 0) # 우하단 모서리
         }
         
         # 호모그래피 행렬 초기화

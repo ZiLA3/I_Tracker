@@ -51,20 +51,17 @@ class App:
             self.state.current = 1
             print("Capture Start...")
 
-    def capture_process(self, iris):
+    def capture_process(self, iris, shape):
         """
         state 2번: 모니터의 끝점 4개를 바라보았을 때 좌표를 측정합니다.
         측정 이후 입력된 값을 기반으로 매퍼를 생성합니다.
         """
-        capture_msg =  f"{self.debug_capture_int}" #self.udp.receive("captured")
-
+        capture_msg = self.udp.receive("captured")
+        w, h, _ = shape
+        w, h = w//4, h//4
         if capture_msg:
-            if self.state.pre_message != capture_msg:
-                print(f"capture count: {capture_msg}/4\n"
-                      f"capture point: {iris}")
-                self.state.capture(iris)
-                self.state.end_capture(capture_msg)
-
+            print("Capture")
+            self.state.capture(w, h, iris)
             self.state.pre_message = capture_msg
 
         if self.state.is_all_captured():
@@ -95,7 +92,7 @@ class App:
                 self.wait_process()
                 pass
             case 1:
-                self.capture_process(iris)
+                self.capture_process(iris, image.shape)
                 pass
             case 2:
                 self.run_process(iris, hands)

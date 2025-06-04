@@ -41,17 +41,14 @@ class UDPState:
     def is_all_captured(self):
         return self.calibration_points["RightBottom"][0] != -1
 
-    def capture(self, iris):
-        iris = np.array(iris).reshape((2, 1))
-        self.temp_array = np.hstack([self.temp_array, iris])
-
-    def end_capture(self, msg):
-        x, y = self.temp_array[0].mean(), self.temp_array[1].mean()
-        self.temp_array = np.empty((2, 0))
-
-        self.calibration_points[self.message_to_points[msg]][0] = x
-        self.calibration_points[self.message_to_points[msg]][1] = y
-
+    def capture(self, w, h, iris):
+        x, y = iris[0], iris[1]
+        self.calibration_points = {
+            "LeftTop": [x - w, y - h],
+            "RightTop": [x + w, y - h],
+            "LeftBottom": [x - w, y + h],
+            "RightBottom": [x + w, y + h]
+        }
 
 class UDPManager:
     """
