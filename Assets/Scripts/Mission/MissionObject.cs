@@ -19,7 +19,7 @@ public class MissionObject : MonoBehaviour, IInteractable
                 inMissionUI.SetActive(true);
         }
 
-        Player.Instance.Mission.SetMissionActive(true);
+        GameManager.Instance.Mission.SetMissionActive(true);
     }
 
     public void SetInteractUIActive(bool active)
@@ -49,6 +49,6 @@ public class MissionObject : MonoBehaviour, IInteractable
         ShowClearKey();
         ResetToMainView();
 
-        Player.Instance.Mission.AddInteractedObject(this);
+        GameManager.Instance.Mission.AddInteractedObject(this);
     }
 }

@@ -7,7 +7,6 @@ using System.Threading;
 
 public class UdpManager : MonoBehaviour
 {
-
     [Header("Receive")]
     public int receivePort = 5052;
     public bool startReceiving = true;

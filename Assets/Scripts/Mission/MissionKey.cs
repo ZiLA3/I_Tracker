@@ -23,7 +23,7 @@ public class MissionKey : MissionObject
 
     private void Update()
     {
-        if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
+        if (GameManager.Instance.Mission.currentInteractable != this || !GameManager.Instance.Mission.IsInMission)
             return;
 
         if (succeeded)
@@ -64,7 +64,7 @@ public class MissionKey : MissionObject
 
     public override void ResetToMainView()
     {
-        Player.Instance.Mission.SetMissionActive(false);
+        GameManager.Instance.Mission.SetMissionActive(false);
 
         if (inMissionUI != null)
             inMissionUI.SetActive(false);
@@ -78,7 +78,7 @@ public class MissionKey : MissionObject
     {
         ResetToMainView();
 
-        Player.Instance.UpdateKey();
+        GameManager.Instance.UpdateKey();
 
         transform.gameObject.SetActive(false); // 키 오브젝트 비활성화
     }

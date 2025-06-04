@@ -1,15 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Player : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [Header("Game UI")]
     [SerializeField] GameObject winUI; // 승리 UI
     [SerializeField] GameObject loseUI; // 패배 UI
+    [SerializeField] GameObject escUI;
     [SerializeField] TextMeshProUGUI keyCountText; // 키 개수 UI (추가된 부분)
     [SerializeField] float timeToShowWinUI = 2f; // 승리 UI 표시 시간
     [SerializeField] float timeToShowLoseUI = 2f; // 패배 UI 표시 시간s
@@ -17,16 +16,15 @@ public class Player : MonoBehaviour
 
     public event Action KeyCountChanged; // 키 개수 변경 이벤트
 
-    public static Player Instance { get; private set; }
+    public static GameManager Instance { get; private set; }
     public EyeCheck Eye { get; private set; }
     public MissionManager Mission { get; private set; }
 
     public bool IsGameOver { get; private set; } = false; // 게임 오버 상태
     public bool IsGameWin { get; private set; } = false; // 게임 승리 상태
 
-    private bool triggeredOfGameWin = false; // 트리거 상태
-    private bool triggeredOfGameOver = false; // 트리거 상태
-
+    private bool triggered0 = false; // 트리거 상태
+    private bool triggered1 = false; // 트리거 상태
 
     private void Awake()
     {
@@ -49,7 +47,7 @@ public class Player : MonoBehaviour
         KeyCountChanged += UpdateKeyCountText;
     }
 
-    public void UpdateKey() 
+    public void UpdateKey()
     {
         KeyCountChanged?.Invoke(); // 키 개수 변경 이벤트 호출
     }
@@ -61,46 +59,60 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        // 게임 승리 상태가 true이고, 트리거가 아직 발생하지 않았다면
-        if (IsGameWin && !triggeredOfGameWin)
+        if(Input.GetMouseButtonDown(1) && CameraManager.Instance.CurrentCameraType == CameraType.mainCamera)
         {
-            triggeredOfGameWin = true; // 트리거 상태를 true로 설정
+            if (escUI.activeSelf)
+                Resume();
+            else
+                Stop();
+        }
+
+        // 게임 승리 상태가 true이고, 트리거가 아직 발생하지 않았다면
+        if ((IsGameWin || IsGameOver) && !triggered0)
+        {
+            triggered0 = true;
             timer = timeToShowWinUI; // 승리 UI 표시 시간 초기화
         }
 
-        // 게임 오버 상태가 true이고, 트리거가 아직 발생하지 않았다면
-        if (IsGameOver && !triggeredOfGameOver)
-        {
-            triggeredOfGameOver = true; // 트리거 상태를 true로 설정
-            timer = timeToShowLoseUI; // 패배 UI 표시 시간 초기화
-        }
-
-        // 게임 패배 UI 표시 시간 설정
-        if (IsGameOver)
+        if (triggered0 && !triggered1)
         {
             timer -= Time.deltaTime; // 타이머 감소
 
             if (timer <= 0f)
             {
-                loseUI.SetActive(true); // 패배 UI 활성화
-                IsGameOver = false; // 게임 오버 상태 초기화
-                triggeredOfGameOver = false; // 트리거 상태 초기화
-            }
-        }
+                triggered1 = true; // 트리거 상태 초기화
 
-        // 게임 승리 UI 표시 시간 설정
-        if (IsGameWin)
-        {
-            timer -= Time.deltaTime; // 타이머 감소
+                if (IsGameWin)
+                    winUI.SetActive(true); // 승리 UI 활성화
+                else
+                    loseUI.SetActive(true); // 패배 UI 활성화
 
-            if (timer <= 0f)
-            {
-                winUI.SetActive(true); // 승리 UI 활성화
-                IsGameWin = false; // 게임 승리 상태 초기화
-                triggeredOfGameWin = false; // 트리거 상태 초기화
             }
         }
     }
+
+    public void Resume()
+    {
+        escUI.SetActive(false);
+        Time.timeScale = 1f; // 게임 재개
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    public void Exit()
+    {
+        Application.Quit(); // 게임 종료
+    }
+
+    private void Stop()
+    {
+        escUI.SetActive(true);
+        Time.timeScale = 0f; // 게임 일시 정지
+    }
+
 
     public void SetGameWinTrue() => IsGameWin = true; // 게임 승리 상태 설정
     public void SetGameOverTrue() => IsGameOver = true; // 게임 오버 상태 설정

@@ -38,7 +38,7 @@ public class MissionRSP : MissionObject
 
     private void Update()
     {
-        if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
+        if (GameManager.Instance.Mission.currentInteractable != this || !GameManager.Instance.Mission.IsInMission)
             return;
 
         if (triggered)
@@ -176,7 +176,7 @@ public class MissionRSP : MissionObject
     {
         base.ResetToMainView();
 
-        Player.Instance.Mission.SetMissionActive(false);
+        GameManager.Instance.Mission.SetMissionActive(false);
 
         inMissionUI.SetActive(false);
         timeText.SetActive(false);

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum CameraType
@@ -15,7 +13,7 @@ public enum CameraType
 }
 
 public class CameraManager : MonoBehaviour
-{ 
+{
     public static CameraManager Instance { get; private set; }
 
     [SerializeField] GameObject mainCamUI;

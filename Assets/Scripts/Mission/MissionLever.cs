@@ -20,7 +20,7 @@ public class MissionLever : MissionObject
 
     private void Update()
     {
-        if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
+        if (GameManager.Instance.Mission.currentInteractable != this || !GameManager.Instance.Mission.IsInMission)
             return;
 
         if (isLeverPulled)
@@ -50,7 +50,7 @@ public class MissionLever : MissionObject
     {
         base.Interact();
 
-        Player.Instance.Mission.SetMissionActive(true);
+        GameManager.Instance.Mission.SetMissionActive(true);
 
         SetHandActive(true);
 
@@ -61,7 +61,7 @@ public class MissionLever : MissionObject
     {
         base.ResetToMainView();
 
-        Player.Instance.Mission.SetMissionActive(false);
+        GameManager.Instance.Mission.SetMissionActive(false);
 
         if (inMissionUI != null)
             inMissionUI.SetActive(false);
@@ -73,6 +73,7 @@ public class MissionLever : MissionObject
     {
         base.SucceedMission();
 
+        GameManager.Instance.Mission.LightTwinkling = false;
         isLeverPulled = false; // 레버 당김 상태 초기화
     }
 }

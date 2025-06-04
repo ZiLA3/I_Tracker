@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EyeCheck : MonoBehaviour
 {
@@ -21,7 +18,6 @@ public class EyeCheck : MonoBehaviour
     [SerializeField] float zoomInFOV = 30f;
     float defaultFOV;
     bool isZoomedIn = false;
-    
 
     // LayerMask
     LayerMask interactableLayer;
@@ -39,7 +35,7 @@ public class EyeCheck : MonoBehaviour
 
     private void Update()
     {
-        if (Player.Instance.IsGameWin || Player.Instance.IsGameOver)
+        if (GameManager.Instance.IsGameWin || GameManager.Instance.IsGameOver)
             return;
 
         GenerateEyeRay(); // 선호출
@@ -53,8 +49,8 @@ public class EyeCheck : MonoBehaviour
         eyePoint = FaceLandmark.EyePoint;
         ray = Camera.main.ScreenPointToRay(eyePoint);
     }
-    
-    private void EyeVisualize() 
+
+    private void EyeVisualize()
     {
         Vector3 screenPos = eyePoint;
         screenPos.z = -Camera.main.transform.position.z;
@@ -63,9 +59,9 @@ public class EyeCheck : MonoBehaviour
         eye.position = worldPos + eyePointOffset;
     }
 
-    private void InteractCheck() 
+    private void InteractCheck()
     {
-        MissionManager missionManager = Player.Instance.Mission;
+        MissionManager missionManager = GameManager.Instance.Mission;
 
         if (missionManager.IsInMission)
             return;
@@ -75,9 +71,9 @@ public class EyeCheck : MonoBehaviour
         {
             MissionObject interactalbe = hit.transform.GetComponentInParent<MissionObject>();
 
-            if (interactalbe != null) 
+            if (interactalbe != null)
             {
-                if (!missionManager.IsInteracted(interactalbe)) 
+                if (!missionManager.IsInteracted(interactalbe))
                 {
                     missionManager.SetCurrentInteractable(interactalbe); // 현재 상호작용 가능한 오브젝트 설정
                     missionManager.currentInteractable.SetInteractUIActive(true); // 상호작용 UI 활성화
@@ -86,15 +82,15 @@ public class EyeCheck : MonoBehaviour
             }
         }
 
-        if(missionManager.currentInteractable != null) // 현재 상호작용 가능했던 오브젝트가 있다면
+        if (missionManager.currentInteractable != null) // 현재 상호작용 가능했던 오브젝트가 있다면
             missionManager.currentInteractable.SetInteractUIActive(false); // 상호작용 UI 비활성화
-        
+
         missionManager.SetCurrentInteractable(null); // 현재 상호작용 가능한 오브젝트 초기화
     }
 
-    private void CheckEnemyOnSight() 
+    private void CheckEnemyOnSight()
     {
-        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, monsterLayer)) 
+        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, monsterLayer))
         {
             Monster ememy = Monster.Instance;
 
@@ -112,7 +108,7 @@ public class EyeCheck : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            MissionManager missionManager = Player.Instance.Mission;
+            MissionManager missionManager = GameManager.Instance.Mission;
 
             if (missionManager.currentInteractable != null)
             {
@@ -123,7 +119,7 @@ public class EyeCheck : MonoBehaviour
         // zoom in 효과 -> 마우스 휠 스크롤로 줌인/줌아웃
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if (CameraManager.Instance.CurrentCameraType == CameraType.mainCamera) 
+        if (CameraManager.Instance.CurrentCameraType == CameraType.mainCamera)
         {
             if (scroll > 0 && !isZoomedIn)
             {

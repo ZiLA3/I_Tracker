@@ -7,9 +7,8 @@ public class MissionManager : MonoBehaviour
     public MissionObject currentInteractable { get; private set; }
     public HashSet<MissionObject> interactedObjects { get; private set; }
 
-
     public bool IsInMission { get; private set; } = false; // ÇöÀç ¹Ì¼Ç ÁßÀÎÁö ¿©ºÎ
-    public bool LightTwinkling { get; set; } = false; // ÇöÀç ºÒºû ±ôºıÀÓ ¿©ºÎ
+    public bool LightTwinkling { get; set; } = true; // ÇöÀç ºÒºû ±ôºıÀÓ ¿©ºÎ
     public int PlayerKeyCount { get; private set; } = 0;
 
     void Start()

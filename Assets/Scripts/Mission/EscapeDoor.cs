@@ -21,7 +21,7 @@ public class EscapeDoor : MissionObject
 
     private void Update()
     {
-        if (Player.Instance.Mission.currentInteractable != this || !Player.Instance.Mission.IsInMission)
+        if (GameManager.Instance.Mission.currentInteractable != this || !GameManager.Instance.Mission.IsInMission)
             return;
 
         if (isDoorOpen)
@@ -33,7 +33,7 @@ public class EscapeDoor : MissionObject
         if (Input.GetMouseButtonDown(1))
             ResetToMainView();
 
-        if (FaceLandmark.HandFolds == 15 && Player.Instance.Mission.PlayerKeyCount == 3)
+        if (FaceLandmark.HandFolds == 15 && GameManager.Instance.Mission.PlayerKeyCount == 3)
         {
             Invoke(nameof(SetDoorOpen), delayTimeToRotate); // 레버 당김 상태를 true로 설정
 
@@ -42,7 +42,7 @@ public class EscapeDoor : MissionObject
             succeeded = true;
             inMissionUI.SetActive(false); // 미션 UI 비활성화
 
-            Player.Instance.SetGameWinTrue();
+            GameManager.Instance.SetGameWinTrue();
         }
     }
 
@@ -52,7 +52,7 @@ public class EscapeDoor : MissionObject
     {
         base.Interact();
 
-        Player.Instance.Mission.SetMissionActive(true);
+        GameManager.Instance.Mission.SetMissionActive(true);
 
         SetHandActive(true);
 
@@ -63,7 +63,7 @@ public class EscapeDoor : MissionObject
     {
         base.ResetToMainView();
 
-        Player.Instance.Mission.SetMissionActive(false);
+        GameManager.Instance.Mission.SetMissionActive(false);
 
         if (inMissionUI != null)
             inMissionUI.SetActive(false);
