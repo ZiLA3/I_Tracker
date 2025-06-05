@@ -26,9 +26,12 @@
 1. Python/Main.py를 실행한다.
 2. 게임을 실행한다.
 
-### 게임 시연 영상
+### 게임 시연 영상 🎬
 
 - 시연 영상 : [Escape Room](https://youtu.be/qd9UHSmd3cw)
+
+### 게임 실행 파일 🗂️
+- One drive Zip 파일 : [Zip File](https://1drv.ms/u/c/b999985f3615a77a/Eb3eSSOZbzlEh1at-65Lzy4BkJK6C_IFq2f_o-jkRi4hRA?e=sCNvWr)
 
 ## 사용된 모듈 🧱
 
@@ -58,7 +61,7 @@ MediaPipe는 구글에서 개발한 실시간 영상 인식 프레임워크로, 
 
 ---
 
-### 프로젝트 Asset 목록
+### 프로젝트 Asset 목록 🎨
 
 - 손 : [unity asset store](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
 - Blood splatter : [unity asset store](https://assetstore.unity.com/packages/2d/textures-materials/blood-splatter-decal-package-7518)
