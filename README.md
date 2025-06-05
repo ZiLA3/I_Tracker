@@ -23,15 +23,17 @@
 
 ### 게임 플레이 방법(250605)
 
+1. 게임을 다운로드 한다.
 1. Python/Main.py를 실행한다.
-2. 게임을 실행한다.
-
-### 게임 시연 영상 🎬
-
-- 시연 영상 : [Escape Room](https://youtu.be/qd9UHSmd3cw)
+2. Escape Room.exe를 실행한다.
 
 ### 게임 실행 파일 🗂️
-- One drive Zip 파일 : [Zip File](https://1drv.ms/u/c/b999985f3615a77a/EXWc1TZ66q5Ag3T3PVfnA2QB6H83w4_Qv6itJjO1TaacTQ?e=nEOmhq)
+[![download](https://github.com/user-attachments/assets/3fed7152-766b-4e61-a270-5dbf99258e29)](https://1drv.ms/u/c/b999985f3615a77a/EXWc1TZ66q5Ag3T3PVfnA2QB6H83w4_Qv6itJjO1TaacTQ?e=nEOmhq)
+
+### 게임 시연 영상 🎬  
+
+[![Video Label](http://img.youtube.com/vi/qd9UHSmd3cw/0.jpg)](https://youtu.be/qd9UHSmd3cw)
+
 
 ## 사용된 모듈 🧱
 
@@ -59,29 +61,13 @@ MediaPipe는 구글에서 개발한 실시간 영상 인식 프레임워크로, 
 
 ![I_Tracker_flowchart](https://github.com/ZiLA3/I_Tracker/blob/main/I_Tracker_flowchart.png)
 
----
-
-### 프로젝트 Asset 목록 🎨
-
-- Hand : [unity asset store](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
-- Blood splatter : [unity asset store](https://assetstore.unity.com/packages/2d/textures-materials/blood-splatter-decal-package-7518)
-- Demon : [unity asset store](https://assetstore.unity.com/packages/3d/characters/creatures/demon-horror-creature-with-weapon-247792)
-- Keypad : [unity asset store](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151)
-- Picture Frames : [unity asset store](https://assetstore.unity.com/packages/3d/props/furniture/picture-frames-301169)
-- Key : [unity asset store](https://assetstore.unity.com/packages/3d/props/furniture/key-and-lock-193317)
-- Wall : [unity asset store](https://assetstore.unity.com/packages/3d/environments/hospital-horror-pack-44045)
-- Lever : [itch.io](https://loafbrr.itch.io/leversandswitches)
----
-
-추가로, 각 에셋에 대한 라이선스와 저작권 정책은 해당 링크에서 반드시 확인하시고, 프로젝트에 맞는 범위 내에서 사용하시길 바랍니다.
-
 ## 파이썬 스크립트 및 구조 🏛️
 
 ### Network.py
 
 - 시스템의 **네트워크 통신**을 담당한다.
 
-- **UdpManager, UdpState** 클래스를 담당한다다.
+- **UdpManager, UdpState** 클래스를 담당한다.
 
 #### UdpState
 
@@ -286,3 +272,18 @@ FaceLandmark의 EyePoint에 맞춰 RayCast를 이용해 2차원 평면일 때 �
 #### GameManager
 
 - 게임 클리어, 게임 오버를 관리한다.
+
+
+### 프로젝트 Asset 목록 🎨
+
+- Hand : [unity asset store](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
+- Blood splatter : [unity asset store](https://assetstore.unity.com/packages/2d/textures-materials/blood-splatter-decal-package-7518)
+- Demon : [unity asset store](https://assetstore.unity.com/packages/3d/characters/creatures/demon-horror-creature-with-weapon-247792)
+- Keypad : [unity asset store](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151)
+- Picture Frames : [unity asset store](https://assetstore.unity.com/packages/3d/props/furniture/picture-frames-301169)
+- Key : [unity asset store](https://assetstore.unity.com/packages/3d/props/furniture/key-and-lock-193317)
+- Wall : [unity asset store](https://assetstore.unity.com/packages/3d/environments/hospital-horror-pack-44045)
+- Lever : [itch.io](https://loafbrr.itch.io/leversandswitches)
+---
+
+추가로, 각 에셋에 대한 라이선스와 저작권 정책은 해당 링크에서 반드시 확인하시고, 프로젝트에 맞는 범위 내에서 사용하시길 바랍니다.
