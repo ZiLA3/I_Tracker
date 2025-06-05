@@ -31,7 +31,7 @@
 - 시연 영상 : [Escape Room](https://youtu.be/qd9UHSmd3cw)
 
 ### 게임 실행 파일 🗂️
-- One drive Zip 파일 : [Zip File](https://1drv.ms/u/c/b999985f3615a77a/Eb3eSSOZbzlEh1at-65Lzy4BkJK6C_IFq2f_o-jkRi4hRA?e=sCNvWr)
+- One drive Zip 파일 : [Zip File](https://1drv.ms/u/c/b999985f3615a77a/EXWc1TZ66q5Ag3T3PVfnA2QB6H83w4_Qv6itJjO1TaacTQ?e=nEOmhq)
 
 ## 사용된 모듈 🧱
 
