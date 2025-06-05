@@ -63,13 +63,13 @@ MediaPipe는 구글에서 개발한 실시간 영상 인식 프레임워크로, 
 
 ### 프로젝트 Asset 목록 🎨
 
-- 손 : [unity asset store](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
+- Hand : [unity asset store](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
 - Blood splatter : [unity asset store](https://assetstore.unity.com/packages/2d/textures-materials/blood-splatter-decal-package-7518)
 - Demon : [unity asset store](https://assetstore.unity.com/packages/3d/characters/creatures/demon-horror-creature-with-weapon-247792)
 - Keypad : [unity asset store](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151)
 - Picture Frames : [unity asset store](https://assetstore.unity.com/packages/3d/props/furniture/picture-frames-301169)
 - Key : [unity asset store](https://assetstore.unity.com/packages/3d/props/furniture/key-and-lock-193317)
-- Map : [unity asset store](https://assetstore.unity.com/packages/3d/environments/hospital-horror-pack-44045)
+- Wall : [unity asset store](https://assetstore.unity.com/packages/3d/environments/hospital-horror-pack-44045)
 - Lever : [itch.io](https://loafbrr.itch.io/leversandswitches)
 ---
 
