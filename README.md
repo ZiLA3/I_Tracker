@@ -57,32 +57,14 @@ MediaPipe는 구글에서 개발한 실시간 영상 인식 프레임워크로, 
 
 ### 프로젝트 Asset 목록
 
-본 프로젝트에서는 아래의 에셋을 사용했습니다:
-
-1. **손 (Stylized Simple Hands)**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
-
-2. **Blood Splatter**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/2d/textures-materials/blood-splatter-decal-package-7518)
-
-3. **Demon**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/3d/characters/creatures/demon-horror-creature-with-weapon-247792)
-
-4. **Keypad**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151)
-
-5. **Picture Frames**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/3d/props/furniture/picture-frames-301169)
-
-6. **Key**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/3d/props/furniture/key-and-lock-193317)
-
-7. **Map**
-   - [Asset Store 링크](https://assetstore.unity.com/packages/3d/environments/hospital-horror-pack-44045)
-
-8. **Lever**
-   - [Itch.io 링크](https://loafbrr.itch.io/leversandswitches)
-
+- 손 : [링크](https://assetstore.unity.com/packages/3d/characters/stylized-simple-hands-221297)
+- Blood splatter : [링크](https://assetstore.unity.com/packages/2d/textures-materials/blood-splatter-decal-package-7518)
+- Demon : [링크](https://assetstore.unity.com/packages/3d/characters/creatures/demon-horror-creature-with-weapon-247792)
+- Keypad : [링크](https://assetstore.unity.com/packages/3d/props/electronics/keypad-free-262151)
+- Picture Frames : [링크](https://assetstore.unity.com/packages/3d/props/furniture/picture-frames-301169)
+- Key : [링크](https://assetstore.unity.com/packages/3d/props/furniture/key-and-lock-193317)
+- Map : [링크](https://assetstore.unity.com/packages/3d/environments/hospital-horror-pack-44045)
+- Lever : [링크](https://loafbrr.itch.io/leversandswitches)
 ---
 
 추가로, 각 에셋에 대한 라이선스와 저작권 정책은 해당 링크에서 반드시 확인하시고, 프로젝트에 맞는 범위 내에서 사용하시길 바랍니다.
