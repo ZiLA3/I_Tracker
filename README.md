@@ -26,6 +26,9 @@
 1. Python/Main.py를 실행한다.
 2. 게임을 실행한다.
 
+### 게임 시연 영상
+
+- 시연 영상 : [Escape Room](https://youtu.be/qd9UHSmd3cw)
 
 ## 사용된 모듈 🧱
 
