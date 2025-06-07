@@ -22,10 +22,10 @@
 ![가위바위보 클리어 gif](Video/RSP.gif)
 
 ### 게임 플레이 방법(250605)
-
+0. 웹캠이 있는 윈도우 컴퓨터를 준비한다. (opencv.videocapture(0) 기준)
 1. 게임을 다운로드 한다.
-1. Python/Main.py를 실행한다.
-2. Escape Room.exe를 실행한다.
+2. Python/Main.py를 실행한다.
+3. Escape Room.exe를 실행한다.
 
 ### 게임 실행 파일 🗂️
 [![download](https://github.com/user-attachments/assets/3fed7152-766b-4e61-a270-5dbf99258e29)](https://1drv.ms/u/c/b999985f3615a77a/EXWc1TZ66q5Ag3T3PVfnA2QB6H83w4_Qv6itJjO1TaacTQ?e=nEOmhq)
@@ -121,6 +121,8 @@ get_send_str(iris, hand)
 |face_mesh|mp.solutions.face_mesh|MediaPipe의 Face Mesh 모듈|
 |hands|mp.solutions.hands|MediaPipe의 Hands 모듈|
 |height, width|int|이미지의 가로와 세로길이를 저장한다.|
+
+|이름|자료형|설명|
 |-|-|-|
 |set_image_size(img)|void|해당 이미지의 가로와 세로길이를 저장한다.|
 |get_iris_pos(multi_face_landmarks)|(x,y)|홍채의 위치를 반환한다.|
@@ -153,6 +155,8 @@ face_landmark, hand_landmark는 다음과 같이 인덱싱 되어있다.
 |이름|자료형|설명|
 |-|-|-|
 |H|np.array|호모그래피 행렬|
+
+|이름|자료형|설명|
 |-|-|-|
 |xyMapper(calibration_points, screen_size)|void|호모그래피 계산을 위한 인수를 받고 호므그래피 행렬을 계산한다.|
 |compute_homography(homography_points)|void|호모그래피 계산을 하여 H를 저장한다.|
@@ -183,6 +187,8 @@ face_landmark, hand_landmark는 다음과 같이 인덱싱 되어있다.
 |xyMapper|xyMapper|xyMapper 클래스 인스턴스|
 |udp|UDPManager|UDPManager 클래스 인스턴스|
 |state|UDPState|UDPState 클래스 인스턴스|
+
+|이름|자료형|설명|
 |-|-|-|
 |read_video()|image(np.array)|video를 읽고, 성공하면 이미지를 반환한다. 실패시 프로세스가 종료된다.|
 |wait_process()|void|wait state(0)일 때 진행되는 프로세스. ScreenSize를 저장한다.|
@@ -190,6 +196,7 @@ face_landmark, hand_landmark는 다음과 같이 인덱싱 되어있다.
 |run_process(iris, hands)|void|매핑된 홍채 좌표와 손 좌표를 Udp로 전송한다.|
 |process()|void|반복하여 처리되는 프로세스.|
 |close()|void|종료시 호출되는 함수.|
+
 ---
 
     기존에는 모니터의 모서리 점 4개를 유니티 신호를 기반으로 측정하여 홍채 위치를 저장하고 이를 통해서 더욱 세밀한 값을 얻을려 했다.  
@@ -211,8 +218,11 @@ face_landmark, hand_landmark는 다음과 같이 인덱싱 되어있다.
 |receivePort|int|받을 포트를 설정한다|
 |startReceiving|bool|수신을 시작할지 설정한다.|
 |data|string|처리되지 않은 수신된 data를 저장한다.|
+
+|이름|자료형|설명|
 |-|-|-|
 |send(data)|void|data를 UTF-8로 인코딩하여 BYTE로 송신한다.|
+
 ---
 멀티스레드 방법으로 지속적으로 수신을 시도하고, 수신이 성공하면 FaceLandMark에
 데이터 처리를 넘긴다.
@@ -228,8 +238,11 @@ face_landmark, hand_landmark는 다음과 같이 인덱싱 되어있다.
 |EyePoint|Vector2|수신된 홍채 좌표를 저장한다.|
 |HandPoints|Vector3|수신된 손 좌표를 저장한다.|
 |HandFolds|int|손가락의 접힘 여부를 바이트 정수변환으로 저장한다.|
+
+|이름|자료형|설명|
 |-|-|-|
 |DataProcessing(data)|void|data를 처리하여 EyePoint와 HandPoint에 저장한다.|
+
 ---
 손가락이 접혀있는지 여부를 확인하는 방법은 다음과 같은 수식으로 구해진다.  
 
