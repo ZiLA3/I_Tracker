@@ -2,14 +2,6 @@
 
 컴퓨터 비전을 이용한 방탈출 공포 게임
 
-## License
-- This project is licensed under the MIT License
-
-## Contributor
-- H00ong(박재홍)
-- Relained(김세원)
-- ZiLa3(김민석)
-
 ### 게임 목표 🚀
  - 열쇠 3개를 미션을 통해 괴물이 오기 전에 문을 열고 탈출하기
 
@@ -308,3 +300,12 @@ FaceLandmark의 EyePoint에 맞춰 RayCast를 이용해 2차원 평면일 때 �
 ---
 
 추가로, 각 에셋에 대한 라이선스와 저작권 정책은 해당 링크에서 반드시 확인하시고, 프로젝트에 맞는 범위 내에서 사용하시길 바랍니다.
+
+### License
+- This project is licensed under the MIT License
+
+### Contributor
+- H00ong(박재홍)
+- Relained(김세원)
+- ZiLa3(김민석)
+
